@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>风电智慧运维管理平台</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2317332c'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Arial' font-size='30' font-weight='700' fill='%23d9f0e7'%3EW%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260630-customer-demo-2" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <div class="brand-mark">W</div>
+          <div>
+            <strong>风电智慧运维</strong>
+            <span>客户试用版</span>
+          </div>
+        </div>
+        <nav class="nav-list">
+          <a class="nav-item active" href="#dashboard">运营总览</a>
+          <a class="nav-item" href="#assets">资产台账</a>
+          <a class="nav-item" href="#workbench">故障管理</a>
+          <a class="nav-item" href="#phase3-pilot">工单中心</a>
+          <a class="nav-item" href="#mobile-climb">登塔作业</a>
+          <a class="nav-item" href="#spare-parts">备件质量</a>
+          <a class="nav-item" href="#turbine-history">设备履历</a>
+          <a class="nav-item" href="#knowledge-ai">知识库</a>
+          <a class="nav-item" href="#reports">报表分析</a>
+          <a class="nav-item" href="#settings">系统配置</a>
+        </nav>
+        <nav class="quick-trial-nav" aria-label="试用快捷入口">
+          <a class="nav-item" href="#phase3-pilot">客户试用</a>
+        </nav>
+        <div class="internal-access-links" aria-hidden="true">
+          <a href="#phase3-evidence-execution" tabindex="-1">证据执行</a>
+          <a href="#phase3-mobile-smoke" tabindex="-1">手机 Smoke</a>
+          <a href="#phase3-backup-restore" tabindex="-1">备份恢复</a>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">客户试用版 · PC 管理端</p>
+            <h1>风电智慧运维管理平台</h1>
+            <p class="topbar-subtitle">风机故障、工单派发、复机验收与审计追踪一体化。</p>
+          </div>
+          <label class="scope-picker">
+            <span>视图范围</span>
+            <select id="scopeSelect" aria-label="视图范围"></select>
+          </label>
+        </header>
+
+        <section class="trial-command" aria-label="试用工作台导览">
+          <div>
+            <p class="eyebrow">成交版工作台</p>
+            <h2>从资产、故障、工单到履历复盘的一体化运维平台</h2>
+            <span>当前试用版开放 PC 管理端核心试用；其他模块保留业务演示数据，便于客户理解完整产品边界。</span>
+          </div>
+          <div class="trial-command-actions">
+            <a class="primary-link" href="#phase3-pilot">开始客户试用</a>
+            <a class="secondary-link" href="#workbench">查看故障工单</a>
+          </div>
+        </section>
+
+        <section id="dashboard" class="metrics-grid" aria-label="核心指标">
+          <article class="metric-card">
+            <span class="metric-label">可利用率</span>
+            <strong id="availabilityRate">--</strong>
+            <small>按机组数加权</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">运行 / 总台数</span>
+            <strong id="runningTurbines">--</strong>
+            <small id="stoppedTurbines">停机 -- 台</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">停机损失</span>
+            <strong id="downtimeLoss">--</strong>
+            <small>MWh</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">开放工单</span>
+            <strong id="openWorkOrders">--</strong>
+            <small id="overdueWorkOrders">超期 -- 单</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">备件消耗</span>
+            <strong id="sparePartCost">--</strong>
+            <small>本周期出库成本</small>
+          </article>
+        </section>
+
+        <section id="product-modules" class="module-overview" aria-label="产品模块地图">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">产品模块地图</p>
+              <h2>业务部门看到的是完整平台，不是单点试用页</h2>
+            </div>
+            <span>可试用 · 演示数据 · 规划中</span>
+          </div>
+          <div class="module-grid">
+            <a class="module-card" href="#assets">
+              <span class="module-status demo">演示数据</span>
+              <strong>资产台账</strong>
+              <small>风场、机组、关键部件、质保和生命周期基础档案。</small>
+            </a>
+            <a class="module-card" href="#workbench">
+              <span class="module-status live">可试用</span>
+              <strong>故障管理</strong>
+              <small>故障登记、确认、关联工单和处理状态跟踪。</small>
+            </a>
+            <a class="module-card" href="#phase3-pilot">
+              <span class="module-status live">可试用</span>
+              <strong>工单中心</strong>
+              <small>项目经理派发工单，系统管理员查看审计留痕。</small>
+            </a>
+            <a class="module-card" href="#mobile-climb">
+              <span class="module-status planned">规划中</span>
+              <strong>登塔作业</strong>
+              <small>现场接单、安全确认、作业填报、影像和签名。</small>
+            </a>
+            <a class="module-card" href="#spare-parts">
+              <span class="module-status demo">演示数据</span>
+              <strong>备件质量</strong>
+              <small>备件消耗、故障件回收、不合格品质检和返厂闭环。</small>
+            </a>
+            <a class="module-card" href="#turbine-history">
+              <span class="module-status demo">演示数据</span>
+              <strong>设备履历</strong>
+              <small>单机故障、工单、登塔、备件和遗留问题时间线。</small>
+            </a>
+            <a class="module-card" href="#knowledge-ai">
+              <span class="module-status demo">演示数据</span>
+              <strong>知识库</strong>
+              <small>相似案例、SOP 建议和人工确认的经验复用。</small>
+            </a>
+            <a class="module-card" href="#reports">
+              <span class="module-status planned">规划中</span>
+              <strong>报表分析</strong>
+              <small>可利用率、停机损失、工单效率和备件成本分析。</small>
+            </a>
+            <a class="module-card" href="#settings">
+              <span class="module-status planned">规划中</span>
+              <strong>系统配置</strong>
+              <small>组织、角色、字典、流程模板和审计策略配置。</small>
+            </a>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel span-2">
+            <div class="panel-header">
+              <h2>运行结构</h2>
+              <span id="scopeLabel">集团全部</span>
+            </div>
+            <div class="ops-layout">
+              <div class="donut" aria-hidden="true">
+                <div class="donut-hole">
+                  <strong id="donutRate">--</strong>
+                  <span>可利用率</span>
+                </div>
+              </div>
+              <div class="status-bars">
+                <div>
+                  <div class="bar-row">
+                    <span>运行机组</span>
+                    <strong id="runningCount">--</strong>
+                  </div>
+                  <div class="bar-track"><div id="runningBar" class="bar-fill running"></div></div>
+                </div>
+                <div>
+                  <div class="bar-row">
+                    <span>停机机组</span>
+                    <strong id="stoppedCount">--</strong>
+                  </div>
+                  <div class="bar-track"><div id="stoppedBar" class="bar-fill stopped"></div></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>重大工单</h2>
+              <span>超期优先</span>
+            </div>
+            <div id="urgentWorkOrders" class="workorder-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>高频故障</h2>
+              <span>TOP 3</span>
+            </div>
+            <div id="faultList" class="rank-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>问题机组</h2>
+              <span>停机时长</span>
+            </div>
+            <div id="problemTurbines" class="rank-list"></div>
+          </article>
+        </section>
+
+        <section id="assets" class="workflow-section" aria-label="资产台账">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">资产台账</p>
+              <h2>风场、机组与关键部件档案</h2>
+            </div>
+            <span>演示数据 · 后续接入真实台账</span>
+          </div>
+          <div class="asset-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <h2>风场资产</h2>
+                <span>4 个风场</span>
+              </div>
+              <div class="asset-list">
+                <div><strong>云岭风场</strong><span>6 台 · WT-5.0 · 山地风场</span></div>
+                <div><strong>河西风场</strong><span>4 台 · WT-4.2 · 戈壁风场</span></div>
+                <div><strong>东海风场</strong><span>5 台 · WT-5.0 · 沿海风场</span></div>
+                <div><strong>海岭风场</strong><span>3 台 · WT-3.6 · 近海风场</span></div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <h2>关键部件</h2>
+                <span>寿命与质保</span>
+              </div>
+              <div class="asset-list">
+                <div><strong>变桨系统</strong><span>18 套 · 2 条高频故障</span></div>
+                <div><strong>齿轮箱</strong><span>18 套 · 1 条温度异常</span></div>
+                <div><strong>偏航系统</strong><span>18 套 · 2 条遗留观察</span></div>
+                <div><strong>液压站</strong><span>18 套 · 1 条待派发工单</span></div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <h2>台账价值</h2>
+                <span>关联闭环</span>
+              </div>
+              <div class="asset-list">
+                <div><strong>一机一档</strong><span>故障、工单、备件和登塔记录统一归集。</span></div>
+                <div><strong>质保追踪</strong><span>部件更换、返厂和质量闭环可追溯。</span></div>
+                <div><strong>成本归因</strong><span>停机损失与备件消耗绑定到机组和故障。</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="workbench" class="workflow-section" aria-label="项目经理工作台">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">项目经理工作台</p>
+              <h2>故障管理与工单派发</h2>
+            </div>
+            <span>登记 · 确认 · 派发 · 跟踪</span>
+          </div>
+
+          <div class="workbench-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <h2>工单负荷</h2>
+                <span id="workOrderTotal">--</span>
+              </div>
+              <div class="workload-metrics">
+                <div><strong id="workOrderOverdue">--</strong><span>超期工单</span></div>
+                <div><strong id="waitingDispatch">--</strong><span>待派发</span></div>
+                <div><strong id="waitingClimb">--</strong><span>待登塔</span></div>
+              </div>
+            </article>
+
+            <article class="panel span-2">
+              <div class="panel-header">
+                <h2>工单状态列</h2>
+                <span>派发路径</span>
+              </div>
+              <div id="workOrderColumns" class="status-column-grid"></div>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>工单详情</h2>
+                <span id="workOrderDetailStatus">--</span>
+              </div>
+              <div id="workOrderDetail" class="detail-grid"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="phase3-pilot" class="workflow-section" aria-label="客户试用工作台">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">客户试用</p>
+              <h2>客户演示工作台</h2>
+            </div>
+            <span>故障登记、工单派发、复机验收与审计追踪</span>
+          </div>
+
+          <div id="phase3PilotConsole" class="pilot-console-grid">
+            <article class="panel trial-overview-panel span-3">
+              <div class="panel-header">
+                <h2>本次客户演示路径</h2>
+                <span>项目经理 / 系统管理员</span>
+              </div>
+              <div class="trial-steps">
+                <div><strong>1</strong><span>项目经理进入演示环境，登记风机故障</span></div>
+                <div><strong>2</strong><span>系统生成工单并派发到现场处理链路</span></div>
+                <div><strong>3</strong><span>项目经理完成复机验收，工单闭环</span></div>
+                <div><strong>4</strong><span>系统管理员查看审计日志，核对关键操作留痕</span></div>
+              </div>
+              <p class="submit-hint">本演示聚焦 PC 管理端成交场景；手机现场作业作为后续现场版能力单独交付。</p>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h2>客户演示登录</h2>
+                <span>试用账号</span>
+              </div>
+              <div class="demo-credential-box" aria-label="客户演示账号">
+                <div><strong>项目经理</strong><span>pm.pilot@example.com</span><code>Demo@2026pm</code></div>
+                <div><strong>系统管理员</strong><span>admin.pilot@example.com</span><code>Demo@2026admin</code></div>
+              </div>
+              <p class="submit-hint">演示账号仅用于本试用环境，和客户生产数据隔离。</p>
+              <form class="login-form" autocomplete="on">
+                <label class="mobile-field">
+                  <span>项目经理邮箱</span>
+                  <input id="phase3PmLoginEmail" type="email" autocomplete="username" value="pm.pilot@example.com" />
+                </label>
+                <label class="mobile-field">
+                  <span>项目经理密码</span>
+                  <input id="phase3PmLoginPassword" type="password" autocomplete="current-password" value="Demo@2026pm" />
+                </label>
+                <button id="phase3PmLoginButton" class="primary-action" type="button">登录项目经理</button>
+              </form>
+              <p id="phase3PmLoginStatus" class="submit-hint">等待项目经理登录。</p>
+              <form class="login-form internal-trial-field" autocomplete="on">
+                <label class="mobile-field">
+                  <span>现场工程师邮箱</span>
+                  <input id="phase3FieldLoginEmail" type="email" autocomplete="username" value="field.pilot@example.com" />
+                </label>
+                <label class="mobile-field">
+                  <span>现场工程师密码</span>
+                  <input id="phase3FieldLoginPassword" type="password" autocomplete="current-password" />
+                </label>
+                <button id="phase3FieldLoginButton" class="secondary-action" type="button">登录现场工程师</button>
+              </form>
+              <p id="phase3FieldLoginStatus" class="submit-hint internal-trial-field">等待现场工程师登录。</p>
+              <form class="login-form" autocomplete="on">
+                <label class="mobile-field">
+                  <span>系统管理员邮箱</span>
+                  <input id="phase3AdminLoginEmail" type="email" autocomplete="username" value="admin.pilot@example.com" />
+                </label>
+                <label class="mobile-field">
+                  <span>系统管理员密码</span>
+                  <input id="phase3AdminLoginPassword" type="password" autocomplete="current-password" value="Demo@2026admin" />
+                </label>
+                <button id="phase3AdminLoginButton" class="secondary-action" type="button">登录系统管理员</button>
+              </form>
+              <p id="phase3AdminLoginStatus" class="submit-hint">等待系统管理员登录。</p>
+            </article>
+
+            <article class="panel span-2">
+              <div class="panel-header">
+                <h2>新建故障工单</h2>
+                <span>登记故障 -> 自动生成工单 -> 派发</span>
+              </div>
+              <label class="mobile-field span-2 internal-trial-field">
+                <span>故障 CSV 导入</span>
+                <textarea id="phase3ImportCsv" rows="4">windFarmId,turbineId,faultCode,component,description
+farm-donghai,DH-05,CSV-001,yaw-system,偏航电机过载</textarea>
+              </label>
+              <button id="phase3ImportFaults" class="secondary-action internal-trial-field" type="button">导入故障</button>
+              <p id="phase3ImportStatus" class="submit-hint internal-trial-field">可粘贴 CSV 后导入待确认故障。</p>
+              <form id="phase3FaultForm" class="pilot-form">
+                <label class="mobile-field">
+                  <span>风场</span>
+                  <input name="windFarmId" value="farm-donghai" />
+                </label>
+                <label class="mobile-field">
+                  <span>机组</span>
+                  <input name="turbineId" value="DH-05" />
+                </label>
+                <label class="mobile-field">
+                  <span>故障代码</span>
+                  <input name="faultCode" value="E-0908" />
+                </label>
+                <label class="mobile-field">
+                  <span>部件</span>
+                  <input name="component" value="yaw-system" />
+                </label>
+                <label class="mobile-field span-2">
+                  <span>故障描述</span>
+                  <input name="description" value="偏航电机过载，需现场检查。" />
+                </label>
+                <label class="mobile-field">
+                  <span>派发对象</span>
+                  <input name="assigneeId" value="field-zhou" />
+                </label>
+                <button class="primary-action" type="submit">提交并派发</button>
+              </form>
+              <p id="phase3FaultStatus" class="submit-hint">等待项目经理提交故障。</p>
+              <div id="phase3WorkbenchSnapshot" class="detail-block">本轮演示尚未产生新工单。</div>
+            </article>
+
+            <article class="panel span-3 internal-trial-panel">
+              <div class="panel-header">
+                <h2>现场工程师任务</h2>
+                <span>现场作业暂缓</span>
+              </div>
+              <div class="pilot-task-row">
+                <button id="phase3LoadTasks" class="secondary-action" type="button">加载我的任务</button>
+                <select id="phase3TaskSelect" aria-label="Phase 3 现场任务"></select>
+                <button id="phase3CompleteTask" class="primary-action" type="button" disabled>完成选中任务</button>
+              </div>
+              <p id="phase3FieldStatus" class="submit-hint">等待现场工程师登录后加载任务。</p>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>项目经理复机验收</h2>
+                <span>验证关闭</span>
+              </div>
+              <button id="phase3VerifyCloseWorkOrder" class="primary-action" type="button" disabled>验证并关闭最近工单</button>
+              <p id="phase3VerificationStatus" class="submit-hint">派发工单后可演示复机验收闭环。</p>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>系统管理员审计</h2>
+                <span>操作留痕</span>
+              </div>
+              <button id="phase3LoadAudit" class="secondary-action" type="button">加载审计记录</button>
+              <p id="phase3AuditStatus" class="submit-hint">等待系统管理员登录后加载审计。</p>
+              <div id="phase3AuditSnapshot" class="detail-block">审计快照待加载。</div>
+            </article>
+          </div>
+        </section>
+
+        <section id="phase3-evidence-execution" class="workflow-section internal-trial-panel" aria-label="Phase 3 今晚证据执行入口">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Phase 3 Release Evidence</p>
+              <h2>今晚证据执行入口</h2>
+            </div>
+            <span>实施负责人 / 业务测试负责人</span>
+          </div>
+
+          <div class="workbench-grid">
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>当前下一步</h2>
+                <span>不得跳步</span>
+              </div>
+              <div class="mobile-smoke-review">
+                <div><span>真机证据</span><strong>npm run phase3:mobile:smoke:verify</strong></div>
+                <div><span>备份证据</span><strong>npm run phase3:backup:restore:verify</strong></div>
+                <div><span>串行复核</span><strong>npm run phase3:production:chain</strong></div>
+              </div>
+              <p class="submit-hint">两个外部证据都 PASS 前，不能把 BLOCKED 手工改成 PASS，也不能正式邀请业务人员试用。</p>
+            </article>
+
+            <article class="panel span-2">
+              <div class="panel-header">
+                <h2>证据文件</h2>
+                <span>两份 CSV</span>
+              </div>
+              <div class="mobile-smoke-precheck">
+                <div><strong>手机 Smoke</strong><span>填写 work/phase3-mobile-smoke/phase3-mobile-smoke.csv，P3-MS-004 必须为 photo_upload，P3-MS-005 必须为 signature。</span></div>
+                <div><strong>备份恢复</strong><span>填写 work/phase3-backup-restore-point/phase3-backup-restore-point.csv，Free plan + supabase_backup 不能 PASS。</span></div>
+                <div><strong>等效审批</strong><span>若不升级 Supabase 备份，先完成 npm run phase3:backup:equivalent:approval:verify。</span></div>
+              </div>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>执行顺序</h2>
+                <span>今晚收口</span>
+              </div>
+              <div class="mobile-smoke-review">
+                <div><span>1</span><strong>打开手机 Smoke 区块，下载并补齐 7 条真机用例 CSV。</strong></div>
+                <div><span>2</span><strong>打开备份恢复区块，选择平台备份或 approved_equivalent，并补齐单行证据。</strong></div>
+                <div><span>3</span><strong>依次运行 mobile smoke、backup restore、production chain 三个命令，全部 PASS 后再进入 Go/No-Go。</strong></div>
+              </div>
+              <p class="submit-hint">证据引用必须能回到截图、照片、签名、备份页面或审批记录；不得填写密码、service role key、GitHub token 或一次性验证码。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="phase3-mobile-smoke" class="workflow-section internal-trial-panel" aria-label="Phase 3 手机 Smoke 扫码入口">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Phase 3 手机 Smoke</p>
+              <h2>真机测试扫码入口</h2>
+            </div>
+            <span>扫码 · 执行 · 回填证据</span>
+          </div>
+
+          <div class="workbench-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <h2>手机入口</h2>
+                <span>稳定 Pilot</span>
+              </div>
+              <div class="mobile-smoke-qr">
+                <img
+                  alt="Phase 3 Pilot 手机 Smoke 二维码"
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&amp;data=https%3A%2F%2Fwind-smart-ops-vercel-preview-curre.vercel.app%2F%3Fphase3PilotLockdown%3Dtrue%23phase3-pilot"
+                />
+                <a class="mobile-smoke-url" href="https://wind-smart-ops-vercel-preview-curre.vercel.app/?phase3PilotLockdown=true#phase3-pilot">
+                  https://wind-smart-ops-vercel-preview-curre.vercel.app/?phase3PilotLockdown=true#phase3-pilot
+                </a>
+              </div>
+              <p class="submit-hint">不得在截图、CSV 或聊天中粘贴密码；账号从交接单领取。</p>
+            </article>
+
+            <article class="panel span-2">
+              <div class="panel-header">
+                <h2>执行顺序</h2>
+                <span>7 条必跑</span>
+              </div>
+              <div class="mobile-smoke-cases">
+                <div><strong>P3-MS-001</strong><span>现场工程师手机登录 Pilot 试用台</span><small>screenshot</small></div>
+                <div><strong>P3-MS-002</strong><span>现场工程师接单</span><small>screenshot</small></div>
+                <div><strong>P3-MS-003</strong><span>现场工程师完成安全确认</span><small>screenshot</small></div>
+                <div><strong>P3-MS-004</strong><span>现场工程师拍照上传</span><small>photo_upload</small></div>
+                <div><strong>P3-MS-005</strong><span>现场工程师电子签名</span><small>signature</small></div>
+                <div><strong>P3-MS-006</strong><span>现场工程师提交作业</span><small>screenshot</small></div>
+                <div><strong>P3-MS-007</strong><span>项目经理复机验证并关闭</span><small>screenshot</small></div>
+              </div>
+            </article>
+
+            <article id="phase3MobileSmokePrecheck" class="panel span-3">
+              <div class="panel-header">
+                <h2>下载前自查</h2>
+                <span>字段完整度</span>
+              </div>
+              <p id="phase3MobileSmokeProgress" class="mobile-smoke-progress">已完成 0/7；每条用例缺字段自查：device、browser、network、tested_at、status、evidence_ref、evidence</p>
+              <div class="mobile-smoke-precheck">
+                <div><strong>共享字段</strong><span>同一轮真机测试必须填写手机型号、浏览器、网络和测试时间。</span></div>
+                <div><strong>逐条状态</strong><span>每条 P3-MS 用例跑完后手动填 PASS、FAIL 或 BLOCKED，不得默认 PASS。</span></div>
+                <div><strong>证据引用</strong><span>P3-MS-004 必须是 photo_upload，P3-MS-005 必须是 signature；每条 evidence_ref 必须包含对应 P3-MS 编号。</span></div>
+                <div><strong>本地证据</strong><span>本地 evidence 路径必须先放入 evidence 目录；网盘链接按共享证据处理。</span></div>
+              </div>
+              <div class="mobile-smoke-helper-grid">
+                <label>手机型号<input id="phase3MobileSmokeDevice" placeholder="iPhone 15 / Mate 60" /></label>
+                <label>浏览器<input id="phase3MobileSmokeBrowser" placeholder="Safari / Chrome" /></label>
+                <label>网络<input id="phase3MobileSmokeNetwork" placeholder="Wi-Fi / 5G" /></label>
+                <label>测试时间<input id="phase3MobileSmokeTestedAt" type="datetime-local" /></label>
+              </div>
+              <div class="mobile-smoke-table-wrap">
+                <table class="mobile-smoke-evidence-table">
+                  <thead>
+                    <tr>
+                      <th>用例</th>
+                      <th>状态</th>
+                      <th>证据引用</th>
+                      <th>证据说明</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-case-id="P3-MS-001" data-role="现场工程师" data-evidence-type="screenshot"><td>P3-MS-001</td><td><select name="status"><option value="">选择状态</option><option value="PASS">PASS</option><option value="FAIL">FAIL</option><option value="BLOCKED">BLOCKED</option></select></td><td><input name="evidence_ref" placeholder="P3-MS-001-login.png" /></td><td><input name="evidence" placeholder="登录截图说明" /></td></tr>
+                    <tr data-case-id="P3-MS-002" data-role="现场工程师" data-evidence-type="screenshot"><td>P3-MS-002</td><td><select name="status"><option value="">选择状态</option><option value="PASS">PASS</option><option value="FAIL">FAIL</option><option value="BLOCKED">BLOCKED</option></select></td><td><input name="evidence_ref" placeholder="P3-MS-002-accepted.png" /></td><td><input name="evidence" placeholder="接单截图说明" /></td></tr>
+                    <tr data-case-id="P3-MS-003" data-role="现场工程师" data-evidence-type="screenshot"><td>P3-MS-003</td><td><select name="status"><option value="">选择状态</option><option value="PASS">PASS</option><option value="FAIL">FAIL</option><option value="BLOCKED">BLOCKED</option></select></td><td><input name="evidence_ref" placeholder="P3-MS-003-safety.png" /></td><td><input name="evidence" placeholder="安全确认说明" /></td></tr>
+                    <tr data-case-id="P3-MS-004" data-role="现场工程师" data-evidence-type="photo_upload"><td>P3-MS-004</td><td><select name="status"><option value="">选择状态</option><option value="PASS">PASS</option><option value="FAIL">FAIL</option><option value="BLOCKED">BLOCKED</option></select></td><td><input name="evidence_ref" placeholder="P3-MS-004-photo-upload.jpg" /></td><td><input name="evidence" placeholder="拍照上传说明" /></td></tr>
+                    <tr data-case-id="P3-MS-005" data-role="现场工程师" data-evidence-type="signature"><td>P3-MS-005</td><td><select name="status"><option value="">选择状态</option><option value="PASS">PASS</option><option value="FAIL">FAIL</option><option value="BLOCKED">BLOCKED</option></select></td><td><input name="evidence_ref" placeholder="P3-MS-005-signature.png" /></td><td><input name="evidence" placeholder="电子签名说明" /></td></tr>
+                    <tr data-case-id="P3-MS-006" data-role="现场工程师" data-evidence-type="screenshot"><td>P3-MS-006</td><td><select name="status"><option value="">选择状态</option><option value="PASS">PASS</option><option value="FAIL">FAIL</option><option value="BLOCKED">BLOCKED</option></select></td><td><input name="evidence_ref" placeholder="P3-MS-006-submitted.png" /></td><td><input name="evidence" placeholder="提交作业说明" /></td></tr>
+                    <tr data-case-id="P3-MS-007" data-role="项目经理" data-evidence-type="screenshot"><td>P3-MS-007</td><td><select name="status"><option value="">选择状态</option><option value="PASS">PASS</option><option value="FAIL">FAIL</option><option value="BLOCKED">BLOCKED</option></select></td><td><input name="evidence_ref" placeholder="P3-MS-007-closed.png" /></td><td><input name="evidence" placeholder="关闭工单说明" /></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="submit-hint">该自查只用于减少 CSV 回填遗漏，不能替代真实手机执行和复核命令。</p>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>回填与复核</h2>
+                <span>证据门禁</span>
+              </div>
+              <div class="mobile-smoke-review">
+                <div><span>CSV 路径</span><strong>work/phase3-mobile-smoke/phase3-mobile-smoke.csv</strong></div>
+                <div><span>复核命令</span><strong>npm run phase3:mobile:smoke:verify</strong></div>
+                <div><span>确认变量</span><strong>MOBILE_DEVICE_SMOKE_CONFIRMED=true</strong></div>
+              </div>
+              <a
+                id="phase3MobileSmokeDownload"
+                class="mobile-smoke-download"
+                download="phase3-mobile-smoke.csv"
+                href="data:text/csv;charset=utf-8,case_id,role,device,browser,network,tested_at,status,evidence_type,evidence_ref,evidence%0AP3-MS-001,%E7%8E%B0%E5%9C%BA%E5%B7%A5%E7%A8%8B%E5%B8%88,,,,,,screenshot,,%0AP3-MS-002,%E7%8E%B0%E5%9C%BA%E5%B7%A5%E7%A8%8B%E5%B8%88,,,,,,screenshot,,%0AP3-MS-003,%E7%8E%B0%E5%9C%BA%E5%B7%A5%E7%A8%8B%E5%B8%88,,,,,,screenshot,,%0AP3-MS-004,%E7%8E%B0%E5%9C%BA%E5%B7%A5%E7%A8%8B%E5%B8%88,,,,,,photo_upload,,%0AP3-MS-005,%E7%8E%B0%E5%9C%BA%E5%B7%A5%E7%A8%8B%E5%B8%88,,,,,,signature,,%0AP3-MS-006,%E7%8E%B0%E5%9C%BA%E5%B7%A5%E7%A8%8B%E5%B8%88,,,,,,screenshot,,%0AP3-MS-007,%E9%A1%B9%E7%9B%AE%E7%BB%8F%E7%90%86,,,,,,screenshot,,%0A"
+              >
+                下载手机 Smoke CSV 模板
+              </a>
+              <p class="submit-hint">只有复核命令 PASS 后，才能设置确认变量并继续生产放行链。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="phase3-backup-restore" class="workflow-section internal-trial-panel" aria-label="Phase 3 备份恢复证据入口">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Phase 3 备份恢复</p>
+              <h2>恢复点与等效审批证据</h2>
+            </div>
+            <span>备份 · 审批 · 复核</span>
+          </div>
+
+          <div class="workbench-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <h2>当前项目</h2>
+                <span>Supabase</span>
+              </div>
+              <div class="mobile-smoke-review">
+                <div><span>项目</span><strong>wind-smart-ops-pilot</strong></div>
+                <div><span>项目 ref</span><strong>mrxcfsfooqaadywsmnzk</strong></div>
+                <div><span>当前阻塞</span><strong>Free Plan does not include project backups</strong></div>
+              </div>
+              <p class="submit-hint">不得在截图、CSV 或审批记录中粘贴 service role key、Pilot 密码或 GitHub token。</p>
+            </article>
+
+            <article class="panel span-2">
+              <div class="panel-header">
+                <h2>两条可选路径</h2>
+                <span>默认优先平台备份</span>
+              </div>
+              <div class="mobile-smoke-precheck">
+                <div><strong>方案 A</strong><span>升级 Supabase 并启用平台备份，CSV 使用 evidence_type=supabase_backup，backup_enabled=true。</span></div>
+                <div><strong>方案 B</strong><span>业务批准 approved_equivalent，审批 PASS 前不得把 approved_equivalent 改为 PASS。</span></div>
+                <div><strong>最终门禁</strong><span>只有备份恢复点证据 PASS 后，才能设置 PHASE3_BACKUP_RESTORE_POINT_CONFIRMED=true。</span></div>
+              </div>
+            </article>
+
+            <article id="phase3BackupRestorePrecheck" class="panel span-3">
+              <div class="panel-header">
+                <h2>CSV 证据助手</h2>
+                <span>单行证据</span>
+              </div>
+              <div class="mobile-smoke-helper-grid">
+                <label>Plan<input id="phase3BackupPlan" value="Free" /></label>
+                <label>backup_enabled<select id="phase3BackupEnabled"><option value="false">false</option><option value="true">true</option></select></label>
+                <label>evidence_type<select id="phase3BackupEvidenceType"><option value="supabase_backup">supabase_backup</option><option value="approved_equivalent">approved_equivalent</option></select></label>
+                <label>restore_point_at<input id="phase3BackupRestorePointAt" placeholder="2026-06-25T22:00:00+08:00" /></label>
+                <label>evidence_ref<input id="phase3BackupEvidenceRef" placeholder="docs/approvals/phase3-backup-equivalent-approval.md" /></label>
+                <label>owner<input id="phase3BackupOwner" placeholder="Supabase 管理员 / 实施负责人" /></label>
+                <label>verified_at<input id="phase3BackupVerifiedAt" placeholder="2026-06-25T22:05:00+08:00" /></label>
+                <label>approver<input id="phase3BackupApprover" placeholder="业务批准人 / 实施负责人" /></label>
+              </div>
+              <p class="submit-hint">Free plan + supabase_backup 会继续 BLOCKED；若选择 approved_equivalent，必须先让审批记录 PASS。</p>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>回填与复核</h2>
+                <span>证据门禁</span>
+              </div>
+              <div class="mobile-smoke-review">
+                <div><span>CSV 路径</span><strong>work/phase3-backup-restore-point/phase3-backup-restore-point.csv</strong></div>
+                <div><span>审批复核</span><strong>npm run phase3:backup:equivalent:approval:verify</strong></div>
+                <div><span>证据复核</span><strong>npm run phase3:backup:restore:verify</strong></div>
+              </div>
+              <a
+                id="phase3BackupRestoreDownload"
+                class="mobile-smoke-download"
+                download="phase3-backup-restore-point.csv"
+                href="data:text/csv;charset=utf-8,project_ref,project_name,plan,backup_enabled,evidence_type,restore_point_at,evidence_ref,owner,verified_at,approver,status,notes%0Amrxcfsfooqaadywsmnzk,wind-smart-ops-pilot,Free,false,supabase_backup,,Free%20Plan%20does%20not%20include%20project%20backups,,,,BLOCKED,upgrade%20or%20approved%20equivalent%20required%0A"
+              >
+                下载备份恢复 CSV 模板
+              </a>
+              <p class="submit-hint">只有复核命令 PASS 后，才能设置 PHASE3_BACKUP_RESTORE_POINT_CONFIRMED=true 并继续生产放行链。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="mobile-climb" class="workflow-section" aria-label="移动端登塔作业">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">现场工程师移动端</p>
+              <h2>登塔作业中心</h2>
+            </div>
+            <span>安全确认 · 作业填报 · 备件登记</span>
+          </div>
+
+          <div class="mobile-climb-shell">
+            <article class="phone-panel">
+              <div class="phone-topbar">
+                <strong>我的任务</strong>
+                <span id="mobileTaskCount">--</span>
+              </div>
+              <div id="mobileTaskList" class="mobile-task-list"></div>
+            </article>
+
+            <article class="phone-panel phone-detail">
+              <div class="phone-topbar">
+                <strong id="climbTaskTitle">登塔记录</strong>
+                <span id="climbTaskStatus">--</span>
+              </div>
+              <div id="climbTaskMeta" class="mobile-meta"></div>
+
+              <div class="mobile-block">
+                <h3>安全确认</h3>
+                <div id="safetyChecklist" class="check-list"></div>
+              </div>
+
+              <div class="mobile-block">
+                <h3>作业填报</h3>
+                <label class="mobile-field">
+                  <span>扫码机组</span>
+                  <input id="scanCodeInput" value="DH-05" aria-label="扫码机组" />
+                </label>
+                <label class="mobile-field">
+                  <span>作业总结</span>
+                  <textarea id="workSummaryInput" aria-label="作业总结">已复位偏航驱动并检查接线。</textarea>
+                </label>
+                <div class="mobile-field readonly-field">
+                  <span>影像资料</span>
+                  <strong id="mediaPlaceholder">3 个附件占位</strong>
+                </div>
+                <div class="mobile-field readonly-field">
+                  <span>备件登记</span>
+                  <strong>偏航限位传感器 × 1</strong>
+                </div>
+                <label class="mobile-field">
+                  <span>电子签名</span>
+                  <input id="signatureInput" value="周工" aria-label="电子签名" />
+                </label>
+                <button id="submitClimbTask" class="primary-action" type="button" disabled>提交登塔记录</button>
+                <p id="submitHint" class="submit-hint">完成全部安全确认后可提交。</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="spare-parts" class="workflow-section" aria-label="备件与不合格品中心">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">备件与不合格品中心</p>
+              <h2>工单绑定消耗与质量闭环</h2>
+            </div>
+            <span>强绑定 · 可追溯 · 可分析</span>
+          </div>
+
+          <div class="spare-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <h2>备件消耗</h2>
+                <span id="spareBoundCount">--</span>
+              </div>
+              <div class="spare-summary">
+                <strong id="spareTotalCost">--</strong>
+                <span>已绑定工单、机组和故障代码</span>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h2>不合格品</h2>
+                <span id="defectiveOpenCount">--</span>
+              </div>
+              <div id="defectiveStatusList" class="status-pill-list"></div>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>工单绑定记录</h2>
+                <span>消耗与故障件联动</span>
+              </div>
+              <div id="spareUsageTable" class="spare-table"></div>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>故障件质量闭环</h2>
+                <span>回收 / 质检 / 返厂 / 闭环</span>
+              </div>
+              <div id="defectivePartList" class="defective-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="turbine-history" class="workflow-section" aria-label="单机履历">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">单机履历</p>
+              <h2>机组全生命周期追溯</h2>
+            </div>
+            <label class="scope-picker compact-picker">
+              <span>记录类型</span>
+              <select id="timelineTypeSelect" aria-label="记录类型">
+                <option value="all">全部记录</option>
+                <option value="fault">故障</option>
+                <option value="workOrder">工单</option>
+                <option value="climbTask">登塔</option>
+                <option value="sparePart">备件</option>
+                <option value="issue">遗留问题</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="history-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <h2 id="historyTurbineId">--</h2>
+                <span id="historyWindFarm">--</span>
+              </div>
+              <div id="historyMeta" class="history-meta"></div>
+            </article>
+
+            <article class="panel span-2">
+              <div class="panel-header">
+                <h2>履历摘要</h2>
+                <span>故障 / 工单 / 备件 / 遗留</span>
+              </div>
+              <div class="history-summary">
+                <div><strong id="historyFaultCount">--</strong><span>故障</span></div>
+                <div><strong id="historyWorkOrderCount">--</strong><span>工单</span></div>
+                <div><strong id="historySpareCost">--</strong><span>备件成本</span></div>
+                <div><strong id="historyOpenIssues">--</strong><span>遗留问题</span></div>
+              </div>
+            </article>
+
+            <article class="panel span-3">
+              <div class="panel-header">
+                <h2>时间线</h2>
+                <span id="historyTimelineCount">--</span>
+              </div>
+              <div id="historyTimeline" class="timeline-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="knowledge-ai" class="workflow-section" aria-label="知识库与智能助手">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">知识库与智能助手</p>
+              <h2>可解释辅助建议</h2>
+            </div>
+            <span>相似案例 · SOP · 人工确认</span>
+          </div>
+
+          <div class="knowledge-grid">
+            <article class="panel span-2">
+              <div class="panel-header">
+                <h2 id="suggestionTitle">--</h2>
+                <span>辅助建议</span>
+              </div>
+              <div id="suggestionEvidence" class="evidence-list"></div>
+              <p id="suggestionDisclaimer" class="ai-disclaimer"></p>
+              <div class="decision-row">
+                <button id="adoptSuggestion" class="primary-action" type="button">采纳建议</button>
+                <button id="ignoreSuggestion" class="secondary-action" type="button">忽略建议</button>
+              </div>
+              <p id="suggestionDecisionHint" class="submit-hint">等待人工确认。</p>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h2>安全边界</h2>
+                <span>不可越权</span>
+              </div>
+              <div id="aiBoundaryList" class="boundary-list"></div>
+            </article>
+
+            <article class="panel span-2">
+              <div class="panel-header">
+                <h2>相似案例</h2>
+                <span id="caseCount">--</span>
+              </div>
+              <div id="knowledgeCaseList" class="knowledge-list"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h2>SOP 建议</h2>
+                <span id="sopCount">--</span>
+              </div>
+              <div id="sopList" class="knowledge-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="reports" class="workflow-section" aria-label="报表分析">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">报表分析</p>
+              <h2>经营指标、运维效率与成本复盘</h2>
+            </div>
+            <span>规划中 · 可按客户口径定制</span>
+          </div>
+          <div class="report-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <h2>运行质量</h2>
+                <span>周 / 月 / 季</span>
+              </div>
+              <div class="report-list">
+                <div><strong>可利用率趋势</strong><span>按集团、大区、项目和风场逐级钻取。</span></div>
+                <div><strong>停机损失分析</strong><span>按机组、故障代码和责任归因聚合。</span></div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <h2>工单效率</h2>
+                <span>调度复盘</span>
+              </div>
+              <div class="report-list">
+                <div><strong>平均响应时长</strong><span>从故障发现到派发、登塔、复机验收。</span></div>
+                <div><strong>超期工单排行</strong><span>定位人员、备件、天气和流程阻塞。</span></div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <h2>成本质量</h2>
+                <span>备件 / 故障件</span>
+              </div>
+              <div class="report-list">
+                <div><strong>备件消耗成本</strong><span>绑定工单、机组、部件和故障代码。</span></div>
+                <div><strong>不合格品闭环</strong><span>质检、返厂、维修、报废和索赔线索。</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="settings" class="workflow-section" aria-label="系统配置">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">系统配置</p>
+              <h2>组织、角色、流程与审计策略</h2>
+            </div>
+            <span>规划中 · 生产版治理能力</span>
+          </div>
+          <div class="settings-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <h2>组织与角色</h2>
+                <span>权限边界</span>
+              </div>
+              <div class="settings-list">
+                <div><strong>组织范围</strong><span>集团、大区、项目、风场和机组数据范围。</span></div>
+                <div><strong>岗位权限</strong><span>管理层、项目经理、现场工程师、备件质量和管理员。</span></div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <h2>流程模板</h2>
+                <span>状态机</span>
+              </div>
+              <div class="settings-list">
+                <div><strong>工单流转</strong><span>待派发、已派发、待登塔、作业中、待复机验证、已关闭。</span></div>
+                <div><strong>异常分支</strong><span>挂起、退回、取消和超期预警。</span></div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <h2>审计与接口</h2>
+                <span>合规可追溯</span>
+              </div>
+              <div class="settings-list">
+                <div><strong>关键动作留痕</strong><span>派工、验收、关闭、备件报废和权限变更。</span></div>
+                <div><strong>外部系统边界</strong><span>预留 SCADA、CMS、ERP 和统一身份认证接口。</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/app.js?v=20260630-customer-demo-2"></script>
+  </body>
+</html>
