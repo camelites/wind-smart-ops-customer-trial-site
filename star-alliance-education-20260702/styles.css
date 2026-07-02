@@ -573,6 +573,7 @@ figcaption {
 }
 
 .partner-media figure,
+.partner-showcase figure,
 .image-showcase {
   margin: 0;
 }
@@ -584,6 +585,45 @@ figcaption {
 
 .partner-media figure:nth-child(2) img {
   object-fit: contain;
+}
+
+.partner-showcase {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.partner-showcase figure {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.partner-showcase .partner-feature {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.partner-showcase img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-bottom: 1px solid var(--line);
+  object-fit: cover;
+}
+
+.partner-showcase .partner-feature img {
+  aspect-ratio: 16 / 11;
+}
+
+.partner-showcase figcaption {
+  margin: 0;
+  min-height: 72px;
+  padding: 14px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .credentials-media img {
@@ -736,6 +776,15 @@ figcaption {
   .case-grid {
     grid-template-columns: 1fr;
   }
+
+  .partner-showcase {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .partner-showcase .partner-feature {
+    grid-column: span 2;
+    grid-row: auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -773,8 +822,13 @@ figcaption {
   .hero-stat-grid,
   .program-grid,
   .service-grid,
+  .partner-showcase,
   .qr-grid {
     grid-template-columns: 1fr;
+  }
+
+  .partner-showcase .partner-feature {
+    grid-column: auto;
   }
 
   .hero-stat-grid div,
