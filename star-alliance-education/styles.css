@@ -204,6 +204,30 @@ h3 {
   overflow: hidden;
 }
 
+.hero-visual {
+  position: relative;
+  margin: 0;
+}
+
+.hero-visual img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.hero-visual figcaption {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  margin: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--primary);
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .hero-stat-main {
   padding: clamp(28px, 5vw, 46px);
   border-bottom: 1px solid var(--line);
@@ -436,6 +460,10 @@ figcaption {
   padding: 24px;
 }
 
+.service-grid article:last-child {
+  grid-column: span 2;
+}
+
 .service-grid span {
   display: inline-flex;
   min-height: 32px;
@@ -477,7 +505,7 @@ figcaption {
 }
 
 .case-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .case-card {
@@ -687,6 +715,10 @@ figcaption {
   .program-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .case-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 880px) {
@@ -759,6 +791,10 @@ figcaption {
   .program-card,
   .service-grid article {
     min-height: auto;
+  }
+
+  .service-grid article:last-child {
+    grid-column: auto;
   }
 
   .contact-section {
