@@ -22,10 +22,12 @@
 }
 
 html {
+  overflow-x: clip;
   scroll-behavior: smooth;
 }
 
 body {
+  overflow-x: clip;
   margin: 0;
   background:
     linear-gradient(180deg, #ffffff 0, #f6f8fb 620px),
@@ -444,7 +446,7 @@ figcaption {
 
 .service-photo img {
   aspect-ratio: 4 / 3;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .service-photo.large img {
@@ -505,7 +507,7 @@ figcaption {
 }
 
 .case-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 }
 
 .case-card {
@@ -699,6 +701,54 @@ figcaption {
   gap: 16px;
 }
 
+.credential-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.credential-gallery figure {
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.credential-gallery img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-bottom: 1px solid var(--line);
+  object-fit: contain;
+}
+
+.credential-gallery figcaption {
+  margin: 0;
+  padding: 12px 14px;
+  color: var(--ink);
+}
+
+.watermarked {
+  position: relative;
+  overflow: hidden;
+}
+
+.watermarked::after {
+  position: absolute;
+  inset: 8px;
+  display: grid;
+  place-items: center;
+  content: "星系国际教育";
+  color: rgba(31, 111, 180, 0.18);
+  font-size: clamp(18px, 3vw, 36px);
+  font-weight: 800;
+  letter-spacing: 0;
+  pointer-events: none;
+  text-align: center;
+  transform: rotate(-28deg);
+}
+
 .proof-list {
   display: flex;
   flex-wrap: wrap;
@@ -882,6 +932,7 @@ figcaption {
   .program-grid,
   .service-grid,
   .partner-showcase,
+  .credential-gallery,
   .qr-grid {
     grid-template-columns: 1fr;
   }
