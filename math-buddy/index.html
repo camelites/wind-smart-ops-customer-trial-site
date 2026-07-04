@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Math Buddy · 暑假数学思维学习工具</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <span>Math Buddy</span>
+          <strong>暑假数学思维</strong>
+        </div>
+        <nav class="app-nav" aria-label="应用导航">
+          <button class="nav-button active" data-view="today" type="button">今日任务</button>
+          <button class="nav-button" data-view="progress" type="button">成长记录</button>
+          <button class="nav-button" data-view="settings" type="button">设置</button>
+        </nav>
+      </header>
+
+      <section class="page-shell page-active" data-page="today">
+        <section class="today-hero">
+          <div>
+            <p class="eyebrow">今天先完成一个小任务</p>
+            <h1>每日数学思维练习</h1>
+          </div>
+          <div class="selector-row">
+            <label>
+              章节目录
+              <select id="unitSelect" aria-label="选择章节"></select>
+            </label>
+            <div class="today-date-card">
+              <span>今日日期</span>
+              <strong id="todayDateLabel"></strong>
+            </div>
+          </div>
+        </section>
+
+        <section id="planSummary" class="summary-grid"></section>
+
+        <section class="daily-grid">
+          <article id="taskPanel" class="panel task-panel"></article>
+          <article id="practicePanel" class="panel practice-panel"></article>
+        </section>
+
+        <section class="daily-grid">
+          <article class="panel writing-panel">
+            <h2>我的学习记录</h2>
+            <div class="photo-evidence-box">
+              <label>
+                上传笔记或解题照片
+                <input id="photoInput" type="file" accept="image/*" capture="environment" />
+              </label>
+              <img id="photoPreview" alt="练习照片预览" hidden />
+              <button id="recognizePhoto" class="ghost" type="button">帮我整理学习记录</button>
+              <div id="photoEvidencePanel" class="photo-evidence-result muted">可以选择相册里的笔记，也可以用手机直接拍照。上传后，我会帮你整理学习记录草稿。</div>
+            </div>
+            <button id="submitLearningRecord" class="primary practice-submit daily-submit" type="button" disabled>先上传并整理学习记录</button>
+            <textarea id="evidence" hidden></textarea>
+            <label>
+              今天的小发现
+              <textarea id="reflection" rows="4" placeholder="例如：我发现“只有”和“至少一个”不能直接当成同一个区域。"></textarea>
+            </label>
+            <button id="submitDiscovery" class="primary practice-submit daily-submit" type="button" disabled>写完今天的小发现后提交</button>
+          </article>
+          <article id="dailySummaryPanel" class="panel student-summary"></article>
+        </section>
+
+        <section id="feedbackPanel" class="panel student-feedback"></section>
+      </section>
+
+      <section class="page-shell" data-page="progress">
+        <header class="page-heading">
+          <p class="eyebrow">Growth Memory</p>
+          <h1>我的成长记录</h1>
+        </header>
+        <section class="daily-grid">
+          <article class="panel">
+            <div class="panel-title-row">
+              <h2>学习习惯</h2>
+              <button id="resetMemory" class="ghost" type="button">重置记录</button>
+            </div>
+            <div id="memoryPanel" class="memory-grid"></div>
+          </article>
+          <article class="panel">
+            <h2>成长时间线</h2>
+            <div id="timeline" class="timeline"></div>
+          </article>
+        </section>
+      </section>
+
+      <section class="page-shell" data-page="settings">
+        <header class="page-heading">
+          <p class="eyebrow">Study Settings</p>
+          <h1>学习设置</h1>
+        </header>
+        <section class="settings-grid">
+          <article class="panel compact">
+            <h2>计划设置</h2>
+            <label>
+              学生
+              <input id="learnerName" type="text" />
+            </label>
+            <div class="two">
+              <label>
+                开始
+                <input id="startDate" type="date" />
+              </label>
+              <label>
+                结束
+                <input id="endDate" type="date" />
+              </label>
+            </div>
+            <label>
+              每日分钟
+              <input id="dailyMinutes" type="number" min="10" max="90" step="5" />
+            </label>
+            <label class="check">
+              <input id="includeWeekends" type="checkbox" />
+              周末也安排轻任务
+            </label>
+            <button id="generatePlan" class="primary" type="button">保存设置</button>
+          </article>
+
+          <article class="panel toc-panel">
+            <h2>预制章节目录</h2>
+            <p class="muted">当前自动载入《数学思维》第 2 章预制学习包。你可以在首页选择任一小节开始学习。</p>
+            <textarea id="tocText" rows="9" readonly></textarea>
+          </article>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
