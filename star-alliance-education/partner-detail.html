@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合作伙伴详情 | 新加坡星系国际教育</title>
+    <meta name="description" content="新加坡星系国际教育合作伙伴详情，展示公立学校、教育系统、金融机构与私人银行合作活动现场。">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23c5162f'/%3E%3Cpath d='M12 39h40v7H12zM18 20h28v7H18zM16 30h32v6H16z' fill='white'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="detail-page">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">星</span>
+        <span>
+          <strong>新加坡星系国际教育</strong>
+          <small>Star Alliance Education & Services</small>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a href="index.html#programs">核心项目</a>
+        <a href="index.html#service">全程服务</a>
+        <a href="index.html#cases">特色案例</a>
+        <a href="index.html#partners">合作伙伴</a>
+        <a href="index.html#contact">联系我们</a>
+      </nav>
+      <a class="header-cta" href="index.html#contact">预约咨询</a>
+    </header>
+
+    <main class="detail-main">
+      <a class="back-link" href="index.html#partners">返回合作伙伴</a>
+      <section class="case-detail-hero">
+        <div>
+          <p class="eyebrow">Partner Activities</p>
+          <h1 id="partner-title">合作伙伴详情</h1>
+          <p id="partner-summary" class="lead"></p>
+          <div class="case-detail-tags" id="partner-tags"></div>
+        </div>
+        <aside class="case-detail-note">
+          <strong>展示说明</strong>
+          <span>本页用于对外展示星系国际教育在教育系统、重点学校、金融机构与私人银行场景中的合作活动。活动图片按公开传播需求进行整理呈现。</span>
+        </aside>
+      </section>
+
+      <section class="partner-detail-overview">
+        <figure class="case-detail-image">
+          <img id="partner-hero-image" src="" alt="">
+          <figcaption id="partner-hero-caption"></figcaption>
+        </figure>
+        <div class="case-detail-copy">
+          <h2>合作价值</h2>
+          <ul id="partner-points"></ul>
+          <h2>活动场景</h2>
+          <p id="partner-value"></p>
+          <a class="primary-action" href="index.html#contact">咨询合作与项目介绍</a>
+        </div>
+      </section>
+
+      <section class="section detail-related partner-detail-section" aria-label="合作活动照片详情">
+        <div class="section-heading">
+          <p class="eyebrow">Activity Gallery</p>
+          <h2>活动照片展示</h2>
+          <p id="partner-gallery-intro"></p>
+        </div>
+        <div class="partner-detail-gallery" id="partner-gallery"></div>
+      </section>
+
+      <section class="section detail-related" aria-label="其他合作类别">
+        <div class="section-heading">
+          <p class="eyebrow">More Partners</p>
+          <h2>继续查看其他合作场景</h2>
+        </div>
+        <div class="partner-related-grid" id="partner-related"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>新加坡星系国际教育</span>
+      <span>新加坡教育资源与国际升学规划服务</span>
+    </footer>
+
+    <script>
+      const partners = {
+        "public-schools": {
+          label: "公立学校与教育系统",
+          title: "走进教育系统与重点学校，持续开展新加坡教育项目交流与升学规划活动",
+          summary: "星系国际教育围绕成都市高新区教育局相关平台、成都重点高中及多地学校，开展项目推介、专家讲座、国际理解教育与升学规划说明，帮助学校与家庭更清晰地了解新加坡教育路径。",
+          heroImage: "assets/site/partner-activity-overview.webp",
+          heroCaption: "2021-2025 社会活动总览资料，涵盖政府合作、学校讲座、金融机构联办与媒体曝光等场景。",
+          tags: ["教育系统合作", "成都重点高中", "项目推介", "家校活动"],
+          points: [
+            "面向教育主管部门、学校与家庭，呈现新加坡教育资源和国际升学路径。",
+            "结合学校需求开展主题讲座、国际理解活动和学生发展规划说明。",
+            "通过现场交流、项目介绍和后续咨询，建立更可追溯的合作与服务链路。"
+          ],
+          value: "这些活动体现星系国际教育的外部合作能力：既能在教育系统和重点学校场景中进行项目沟通，也能面向学生与家长提供清晰、可理解、可落地的升学规划说明。",
+          galleryIntro: "以下为高新区教育合作、成都重点学校及多地学校活动现场，重点展示真实活动场景和长期服务覆盖。",
+          gallery: [
+            {
+              image: "assets/site/partner-xinchuan-service-center.webp",
+              title: "成都新川服务中心现场交流",
+              caption: "走进成都新川服务中心，围绕新加坡教育资源引进、国际教育项目合作与区域家庭服务需求进行现场沟通。"
+            },
+            {
+              image: "assets/site/partner-xinchuan-visit.webp",
+              title: "高新区合作场景考察",
+              caption: "在新川片区及新加坡创新中心相关场景开展考察交流，推动教育资源、项目服务与区域需求的衔接。"
+            },
+            {
+              image: "assets/site/partner-education-center-signing.webp",
+              title: "教育局国际交流中心合作签约",
+              caption: "与成都市教育局国际交流中心相关合作场景，体现星系国际教育在教育系统合作中的正式沟通基础。"
+            },
+            {
+              image: "assets/site/partner-school-chengdu-qizhong.webp",
+              title: "成都七中重点学校活动",
+              caption: "面向重点学校学生与家庭开展国际理解、升学路径和新加坡教育体系相关主题分享。"
+            },
+            {
+              image: "assets/site/partner-school-tanghu.webp",
+              title: "棠湖中学升学规划说明",
+              caption: "围绕新加坡教育路径、学生发展方向和家庭规划需求开展现场说明，帮助家庭建立更清晰的升学认知。"
+            },
+            {
+              image: "assets/site/partner-school-nanshan-new.webp",
+              title: "南山中学主题讲座",
+              caption: "在重点学校场景中开展新加坡教育主题分享，围绕国际化人才培养和升学路径进行交流。"
+            },
+            {
+              image: "assets/site/partner-school-deyang-foreign.webp",
+              title: "德阳外国语学校专家讲座",
+              caption: "面向学校与家庭展开国际教育专家讲座，结合学生阶段特点介绍新加坡及海外升学方向。"
+            },
+            {
+              image: "assets/site/partner-school-yulin-new.webp",
+              title: "陕西省榆林中学讲座",
+              caption: "围绕新加坡顶尖教育资源、政府奖学金和名校升学路径进行介绍，扩大优质教育资源触达范围。"
+            },
+            {
+              image: "assets/site/partner-parent-class-new.webp",
+              title: "家长课堂与项目说明会",
+              caption: "面向家庭开展国际人才培养和新加坡项目说明，回应家长关于路径选择、时间节点和申请准备的核心问题。"
+            },
+            {
+              image: "assets/site/partner-campus-culture.webp",
+              title: "校园文化体验活动",
+              caption: "通过新加坡多元文化校园活动，让学生在体验中理解国际教育环境与跨文化学习方式。"
+            }
+          ]
+        },
+        finance: {
+          label: "金融机构与私人银行",
+          title: "联合金融机构与私人银行，为高净值家庭提供国际教育主题分享与规划支持",
+          summary: "星系国际教育与银行及私人银行客户服务场景保持合作，围绕子女国际化教育、新加坡精英教育路径、政府奖学金申请与海外名校衔接举办主题沙龙和客户活动。",
+          heroImage: "assets/site/bank-cmb-salon-new.webp",
+          heroCaption: "招商银行国际教育主题沙龙现场，围绕子女教育规划与新加坡升学路径进行分享。",
+          tags: ["私人银行客户活动", "招商银行", "中信银行", "高净值家庭服务"],
+          points: [
+            "结合私人银行客户家庭需求，提供国际教育路径、申请节奏和政策要点说明。",
+            "在银行沙龙和客户活动中提供主题分享，帮助家庭理解新加坡教育体系及后续海外衔接机会。",
+            "通过现场讲座、定制咨询和后续服务承接，形成面向高净值家庭的专业教育支持。"
+          ],
+          value: "金融机构合作活动强调可信度与服务承接能力。星系国际教育通过银行与私人银行场景，把复杂的国际教育路径转化为高净值家庭能够理解和决策的规划方案。",
+          galleryIntro: "以下为招商银行、中信银行及私人银行活动现场，重点展示真实沙龙、主题分享和客户沟通场景。",
+          gallery: [
+            {
+              image: "assets/site/bank-cmb-salon-new.webp",
+              title: "招商银行国际教育安全之路沙龙",
+              caption: "联合招商银行相关分行开展国际教育主题分享，围绕新加坡教育优势、子女升学规划和家庭资产配置下的教育决策进行交流。"
+            },
+            {
+              image: "assets/site/bank-cmb-private-event.webp",
+              title: "招商银行私人银行客户活动",
+              caption: "面向私人银行客户家庭，系统介绍新加坡精英教育路径、申请准备节奏和后续海外名校衔接方向。"
+            },
+            {
+              image: "assets/site/bank-cmb-signage.webp",
+              title: "招商银行活动现场资料",
+              caption: "活动现场围绕国际教育规划主题进行视觉呈现，便于客户清晰了解分享议题和服务方向。"
+            },
+            {
+              image: "assets/site/bank-cmb-private-plan.webp",
+              title: "招商银行定制规划沟通",
+              caption: "针对高净值家庭关注的升学安全、路径确定性和长期发展，进行更细致的规划说明。"
+            },
+            {
+              image: "assets/site/bank-citic-bank-new.webp",
+              title: "中信银行教育规划分享",
+              caption: "在中信银行相关活动中介绍新加坡教育体系、申请政策和国际升学规划，为家庭提供路径参考。"
+            },
+            {
+              image: "assets/site/bank-citic-private-salon.webp",
+              title: "中信私人银行成都分行高端沙龙",
+              caption: "面向私人银行高净值客户开展新加坡通向全球名校教育规划主题沙龙，聚焦家庭长期教育安排。"
+            },
+            {
+              image: "assets/site/bank-citic-private-interview.webp",
+              title: "中信私人银行现场交流",
+              caption: "活动现场围绕学生阶段、目标学校、申请材料和家庭规划问题进行沟通，增强后续咨询承接。"
+            },
+            {
+              image: "assets/site/partner-parent-salon.webp",
+              title: "高端家庭教育规划沙龙",
+              caption: "面向关注国际化教育的家庭开展专题交流，帮助家长理解不同阶段的规划重点和风险控制。"
+            }
+          ]
+        }
+      };
+
+      const params = new URLSearchParams(window.location.search);
+      const key = partners[params.get("type")] ? params.get("type") : "public-schools";
+      const current = partners[key];
+      document.title = `${current.label} | 合作伙伴 | 新加坡星系国际教育`;
+      document.getElementById("partner-title").textContent = current.title;
+      document.getElementById("partner-summary").textContent = current.summary;
+      document.getElementById("partner-hero-image").src = current.heroImage;
+      document.getElementById("partner-hero-image").alt = current.title;
+      document.getElementById("partner-hero-caption").textContent = current.heroCaption;
+      document.getElementById("partner-value").textContent = current.value;
+      document.getElementById("partner-gallery-intro").textContent = current.galleryIntro;
+      document.getElementById("partner-tags").innerHTML = current.tags.map((tag) => `<span>${tag}</span>`).join("");
+      document.getElementById("partner-points").innerHTML = current.points.map((point) => `<li>${point}</li>`).join("");
+
+      document.getElementById("partner-gallery").innerHTML = current.gallery
+        .map((item) => `
+          <article class="partner-detail-card">
+            <img src="${item.image}" alt="${item.title}">
+            <div>
+              <h3>${item.title}</h3>
+              <p>${item.caption}</p>
+            </div>
+          </article>
+        `)
+        .join("");
+
+      document.getElementById("partner-related").innerHTML = Object.entries(partners)
+        .filter(([partnerKey]) => partnerKey !== key)
+        .map(([partnerKey, item]) => `
+          <a class="partner-related-card" href="partner-detail.html?type=${partnerKey}">
+            <img src="${item.heroImage}" alt="${item.label}">
+            <div>
+              <p>${item.label}</p>
+              <h3>${item.title}</h3>
+              <span>${item.summary}</span>
+              <em>查看合作详情</em>
+            </div>
+          </a>
+        `)
+        .join("");
+    </script>
+  </body>
+</html>
