@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特色案例详情 | 新加坡星系国际教育</title>
+    <meta name="description" content="新加坡星系国际教育特色案例详情，展示升学规划、录取成果与国际教育路径。">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23c5162f'/%3E%3Cpath d='M12 39h40v7H12zM18 20h28v7H18zM16 30h32v6H16z' fill='white'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="detail-page">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">星</span>
+        <span>
+          <strong>新加坡星系国际教育</strong>
+          <small>Star Alliance Education & Services</small>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a href="index.html#programs">核心项目</a>
+        <a href="index.html#service">全程服务</a>
+        <a href="index.html#cases">特色案例</a>
+        <a href="index.html#partners">合作伙伴</a>
+        <a href="index.html#contact">联系我们</a>
+      </nav>
+      <a class="header-cta" href="index.html#contact">预约咨询</a>
+    </header>
+
+    <main class="detail-main">
+      <a class="back-link" href="index.html#cases">返回特色案例</a>
+      <section class="case-detail-hero">
+        <div>
+          <p class="eyebrow">Featured Case</p>
+          <h1 id="case-title">特色案例详情</h1>
+          <p id="case-summary" class="lead"></p>
+          <div class="case-detail-tags" id="case-tags"></div>
+        </div>
+        <aside class="case-detail-note">
+          <strong>隐私说明</strong>
+          <span>案例展示已隐去学生姓名、证件号码、联系方式等敏感信息，仅用于说明规划路径、服务内容与录取成果类型。</span>
+        </aside>
+      </section>
+
+      <section class="case-detail-layout">
+        <figure class="case-detail-image">
+          <img id="case-image" src="" alt="">
+          <figcaption id="case-caption"></figcaption>
+        </figure>
+        <div class="case-detail-copy">
+          <h2>案例亮点</h2>
+          <ul id="case-points"></ul>
+          <h2>服务价值</h2>
+          <p id="case-value"></p>
+          <a class="primary-action" href="index.html#contact">预约路径评估</a>
+        </div>
+      </section>
+
+      <section class="section detail-related" aria-label="其他特色案例">
+        <div class="section-heading">
+          <p class="eyebrow">More Cases</p>
+          <h2>继续查看其他案例</h2>
+        </div>
+        <div class="case-grid" id="related-cases"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>新加坡星系国际教育</span>
+      <span>新加坡教育资源与国际升学规划服务</span>
+    </footer>
+
+    <script>
+      const cases = {
+        elite: {
+          label: "精英人才计划",
+          title: "从升学规划到录取成果，呈现新加坡精英教育路径的阶段性突破",
+          summary: "针对希望提前布局新加坡优质教育资源的家庭，星系国际教育提供从目标评估、路径选择到材料准备的连续支持，帮助学生在关键阶段形成更清晰的升学方向。",
+          image: "assets/site/case-elite-admission.webp",
+          caption: "精英人才计划相关录取成果资料，页面已进行隐私处理。",
+          tags: ["路径规划", "精英教育", "录取成果"],
+          points: [
+            "结合学生当前阶段和家庭目标，梳理新加坡教育体系下的可行路径。",
+            "围绕目标学校与项目要求，提前准备语言、学术、活动和申请材料。",
+            "通过阶段性复盘，帮助家庭在关键时间点做出更稳妥的升学选择。"
+          ],
+          value: "这一类案例体现的是长期规划的价值：不是只处理单次申请，而是围绕学生成长阶段持续调整策略，让申请材料、时间节点和结果目标相互匹配。"
+        },
+        offers: {
+          label: "多校录取成果",
+          title: "多所海外学校录取结果集中展示，体现申请策略与材料准备能力",
+          summary: "通过合理的学校组合、申请节奏和材料呈现，帮助学生获得多所学校的录取机会，为家庭后续择校和路径决策留出更充足空间。",
+          image: "assets/site/case-offer-summary.webp",
+          caption: "多所海外学校录取成果汇总资料，学生个人信息已隐去。",
+          tags: ["多校申请", "材料规划", "择校空间"],
+          points: [
+            "根据学生条件建立冲刺、匹配和稳妥层次的申请组合。",
+            "统一梳理申请材料、文书表达和时间节点，减少重复沟通成本。",
+            "在多个录取结果之间协助家庭评估学校、课程和后续发展路径。"
+          ],
+          value: "多校录取不仅是结果数量，更重要的是让家庭拥有选择权。星系国际教育通过前期定位和过程管理，提高申请结果的确定性和可比较性。"
+        },
+        graduate: {
+          label: "新加坡高考路径",
+          title: "通过阶段化规划进入更高层级升学通道，连接新加坡及海外名校机会",
+          summary: "面向希望通过新加坡体系进入更高层级大学机会的学生，星系国际教育提供考试路径、课程节奏和申请衔接的综合规划支持。",
+          image: "assets/site/case-student-photo-1.webp",
+          caption: "学生升学成果照片资料，已按公开展示要求处理。",
+          tags: ["新加坡体系", "阶段提升", "名校衔接"],
+          points: [
+            "评估学生学术基础和适应能力，明确适合的考试与升学路线。",
+            "在课程学习、考试准备和申请节奏之间建立清晰安排。",
+            "结合阶段成果，为后续本科、研究生或海外名校申请创造条件。"
+          ],
+          value: "这一类型案例强调路径设计和阶段跃迁。通过持续跟进学生表现，及时调整目标和申请策略，可以把单点成绩转化为更完整的升学机会。"
+        },
+        global: {
+          label: "海外名校直通车",
+          title: "海外本科、硕士与博士阶段连续衔接，打造长期国际化升学路径",
+          summary: "对于重视长期发展的家庭，星系国际教育关注的不只是某一次录取，而是学生从本科到研究生乃至博士阶段的专业方向、学校层级和国际竞争力积累。",
+          image: "assets/site/case-overseas-admission.webp",
+          caption: "海外名校直通车录取成果资料，相关隐私信息已处理。",
+          tags: ["长期规划", "海外名校", "专业衔接"],
+          points: [
+            "结合学生长期目标，规划本科、硕士与博士阶段的衔接方向。",
+            "关注专业选择、课程背景、研究经历和申请材料的一致性。",
+            "帮助家庭理解不同国家和院校体系下的录取逻辑和发展路径。"
+          ],
+          value: "长期升学规划的关键在于连续性。星系国际教育通过多年服务经验，帮助学生把每个阶段的选择变成下一阶段申请的基础。"
+        },
+        photo: {
+          label: "海外名校升学",
+          title: "结合学生背景与目标院校，完成个性化申请定位和录取衔接",
+          summary: "星系国际教育根据学生的学术背景、语言基础、活动经历和家庭期待，制定更贴合个人情况的申请方案，提升目标院校匹配度。",
+          image: "assets/site/case-student-photo-2.webp",
+          caption: "海外名校升学成果照片资料，保留公开展示所需信息。",
+          tags: ["个性化申请", "背景梳理", "录取衔接"],
+          points: [
+            "从学生真实情况出发，避免模板化申请方案。",
+            "围绕目标院校要求梳理优势、补足短板，并优化材料呈现。",
+            "在录取后继续协助家庭处理入学衔接、后续规划等关键事项。"
+          ],
+          value: "个性化申请的价值在于让学生优势被准确理解。通过系统梳理和专业呈现，家庭可以更清楚地看到路径、风险和机会。"
+        }
+      };
+
+      const params = new URLSearchParams(window.location.search);
+      const key = cases[params.get("case")] ? params.get("case") : "elite";
+      const current = cases[key];
+      document.title = `${current.label} | 特色案例 | 新加坡星系国际教育`;
+      document.getElementById("case-title").textContent = current.title;
+      document.getElementById("case-summary").textContent = current.summary;
+      document.getElementById("case-image").src = current.image;
+      document.getElementById("case-image").alt = current.title;
+      document.getElementById("case-caption").textContent = current.caption;
+      document.getElementById("case-value").textContent = current.value;
+      document.getElementById("case-tags").innerHTML = current.tags.map((tag) => `<span>${tag}</span>`).join("");
+      document.getElementById("case-points").innerHTML = current.points.map((point) => `<li>${point}</li>`).join("");
+
+      document.getElementById("related-cases").innerHTML = Object.entries(cases)
+        .filter(([caseKey]) => caseKey !== key)
+        .map(([caseKey, item]) => `
+          <a class="case-card" href="case-detail.html?case=${caseKey}">
+            <img src="${item.image}" alt="${item.label}">
+            <div>
+              <p>${item.label}</p>
+              <h3>${item.title}</h3>
+              <span>${item.summary}</span>
+              <em>查看完整案例</em>
+            </div>
+          </a>
+        `)
+        .join("");
+    </script>
+  </body>
+</html>
