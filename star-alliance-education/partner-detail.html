@@ -236,7 +236,7 @@
       document.getElementById("partner-related").innerHTML = Object.entries(partners)
         .filter(([partnerKey]) => partnerKey !== key)
         .map(([partnerKey, item]) => `
-          <a class="partner-related-card" href="partner-activities.html?type=${partnerKey}">
+          <a class="partner-related-card" href="partner-detail.html?type=${partnerKey}">
             <img src="${item.heroImage}" alt="${item.label}">
             <div>
               <p>${item.label}</p>
