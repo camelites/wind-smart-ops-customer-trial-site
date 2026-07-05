@@ -6,6 +6,7 @@ import {
   buildDailySummary,
   completeTask,
   evaluatePracticeAnswers,
+  formatLocalDateIso,
   generateSummerPlan,
   getTaskForDate,
   restoreMemory,
@@ -15,6 +16,7 @@ import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.j
 
 const STORAGE_KEY = "math-buddy-growth-memory-v1";
 const SUBMISSIONS_STORAGE_KEY = "math-buddy-daily-submissions-v1";
+const initialToday = formatLocalDateIso();
 
 const state = {
   settings: { ...DEFAULT_SETTINGS },
@@ -29,8 +31,8 @@ const state = {
   memory: restoreMemory(localStorage.getItem(STORAGE_KEY)),
   dailySubmissions: restoreDailySubmissions(localStorage.getItem(SUBMISSIONS_STORAGE_KEY)),
   plan: null,
-  today: new Date().toISOString().slice(0, 10),
-  selectedDate: "2026-07-04",
+  today: initialToday,
+  selectedDate: initialToday,
   hydratedTaskId: null,
   lastPracticeResult: null,
   lastSummary: null
@@ -103,6 +105,7 @@ function showPage(pageName) {
 }
 
 function onGeneratePlan() {
+  state.today = formatLocalDateIso();
   state.settings = {
     ...state.settings,
     learnerName: elements.learnerName.value.trim() || DEFAULT_SETTINGS.learnerName,
@@ -438,10 +441,10 @@ function renderPlan() {
   const task = getTaskForDate(state.plan, state.selectedDate);
   elements.todayDateLabel.textContent = formatDisplayDate(state.selectedDate);
   elements.planSummary.innerHTML = `
-    <div><strong>${formatDisplayDate(state.selectedDate)}</strong><span>今天</span></div>
     <div><strong>${task?.unitTitle || "-"}</strong><span>当前小节</span></div>
     <div><strong>${taskCount}</strong><span>预制任务</span></div>
     <div><strong>${state.memory.progress.completedTasks}</strong><span>已完成</span></div>
+    <div><strong>${state.memory.progress.currentStreakDays}</strong><span>连续天数</span></div>
   `;
   elements.unitSelect.innerHTML = state.plan.tasks
     .map((task, index) => `<option value="${task.date}" ${task.date === state.selectedDate ? "selected" : ""}>${index + 1}. ${escapeHtml(task.unitTitle)}</option>`)
