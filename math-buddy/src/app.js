@@ -11,11 +11,10 @@ import {
   getTaskForDate,
   restoreMemory,
   sanitizePersistencePayload
-} from "./mathBuddyEngine.js?v=20260705b";
-import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260705b";
+} from "./mathBuddyEngine.js?v=20260705c";
+import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260705c";
+import { STORAGE_KEYS } from "./storageKeys.js?v=20260705c";
 
-const STORAGE_KEY = "math-buddy-growth-memory-v1";
-const SUBMISSIONS_STORAGE_KEY = "math-buddy-daily-submissions-v1";
 const initialToday = formatLocalDateIso();
 
 const state = {
@@ -28,8 +27,8 @@ const state = {
   contentProfile: MATH_THINKING_CHAPTER_2_PROFILE,
   photoFile: null,
   photoRecognition: null,
-  memory: restoreMemory(localStorage.getItem(STORAGE_KEY)),
-  dailySubmissions: restoreDailySubmissions(localStorage.getItem(SUBMISSIONS_STORAGE_KEY)),
+  memory: restoreMemory(localStorage.getItem(STORAGE_KEYS.memory)),
+  dailySubmissions: restoreDailySubmissions(localStorage.getItem(STORAGE_KEYS.dailySubmissions)),
   plan: null,
   today: initialToday,
   selectedDate: initialToday,
@@ -198,14 +197,14 @@ function finalizeTaskIfReady(task) {
     reflection: submission.discovery.text,
     memory: state.memory
   });
-  localStorage.setItem(STORAGE_KEY, sanitizePersistencePayload(state.memory));
+  localStorage.setItem(STORAGE_KEYS.memory, sanitizePersistencePayload(state.memory));
 }
 
 function onResetMemory() {
   state.memory = restoreMemory("");
   state.dailySubmissions = {};
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(SUBMISSIONS_STORAGE_KEY);
+  localStorage.removeItem(STORAGE_KEYS.memory);
+  localStorage.removeItem(STORAGE_KEYS.dailySubmissions);
   state.lastPracticeResult = null;
   state.lastSummary = null;
   elements.evidence.value = "";
@@ -758,7 +757,7 @@ function getTaskSubmission(task = getTaskForDate(state.plan, state.selectedDate)
 }
 
 function persistDailySubmissions() {
-  localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(state.dailySubmissions));
+  localStorage.setItem(STORAGE_KEYS.dailySubmissions, JSON.stringify(state.dailySubmissions));
 }
 
 function restoreDailySubmissions(value) {
