@@ -11,8 +11,8 @@ import {
   getTaskForDate,
   restoreMemory,
   sanitizePersistencePayload
-} from "./mathBuddyEngine.js";
-import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js";
+} from "./mathBuddyEngine.js?v=20260705";
+import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260705";
 
 const STORAGE_KEY = "math-buddy-growth-memory-v1";
 const SUBMISSIONS_STORAGE_KEY = "math-buddy-daily-submissions-v1";
