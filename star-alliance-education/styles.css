@@ -50,7 +50,7 @@ img {
   top: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: minmax(230px, 1fr) auto auto;
+  grid-template-columns: minmax(230px, 1fr) auto auto auto;
   align-items: center;
   gap: 22px;
   padding: 14px clamp(18px, 4vw, 56px);
@@ -107,7 +107,8 @@ img {
 
 .header-cta,
 .primary-action,
-.secondary-action {
+.secondary-action,
+.language-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -129,6 +130,21 @@ img {
   background: var(--surface);
   color: var(--ink);
   padding: 0 18px;
+}
+
+.language-toggle {
+  border: 1px solid rgba(197, 22, 47, 0.24);
+  background: var(--surface);
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0 13px;
+  font: inherit;
+  font-weight: 800;
+}
+
+.language-toggle:hover {
+  border-color: rgba(197, 22, 47, 0.45);
+  background: var(--red-soft);
 }
 
 .hero {
@@ -1153,7 +1169,7 @@ figcaption {
 
 @media (max-width: 1120px) {
   .site-header {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
   }
 
   .nav-links {
@@ -1220,6 +1236,11 @@ figcaption {
   .brand small,
   .header-cta {
     display: none;
+  }
+
+  .language-toggle {
+    min-height: 40px;
+    padding: 0 11px;
   }
 
   .hero {
