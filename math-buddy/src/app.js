@@ -11,9 +11,10 @@ import {
   getTaskForDate,
   restoreMemory,
   sanitizePersistencePayload
-} from "./mathBuddyEngine.js?v=20260706";
-import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260706";
-import { STORAGE_KEYS } from "./storageKeys.js?v=20260706";
+} from "./mathBuddyEngine.js?v=20260706b";
+import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260706b";
+import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260706b";
+import { STORAGE_KEYS } from "./storageKeys.js?v=20260706b";
 
 const initialToday = formatLocalDateIso();
 
@@ -278,6 +279,7 @@ async function onRecognizePhoto() {
 async function analyzeSelectedPhotosInBrowser(photoItems) {
   const payloads = [];
   for (let index = 0; index < photoItems.length; index += 1) {
+    elements.photoEvidencePanel.textContent = `正在识别第 ${index + 1}/${photoItems.length} 张学习记录照片...`;
     payloads.push(await analyzePracticePhotoInBrowser(photoItems[index].file, index + 1, photoItems.length));
   }
   return mergePhotoEvidencePayloads(payloads);
@@ -346,21 +348,31 @@ async function analyzePracticePhotoInBrowser(file, photoIndex = 1, photoTotal = 
   const edgeMean = round(edgeSum / Math.max(1, grays.length - width - 1), 1);
   const quality = inferBrowserImageQuality(image.naturalWidth, image.naturalHeight, brightness, contrast, darkRatio);
   const confidence = quality === "clear" ? "medium" : "low";
+  const ocrResult = await recognizePhotoTextSafely(file, photoIndex, photoTotal);
+  const ocrSummary = summarizeOcrText(ocrResult.text);
+  const observedSteps = buildBrowserObservedSteps(image.naturalWidth, image.naturalHeight, brightness, contrast, edgeMean, darkRatio, ocrResult, photoIndex);
+  const possibleMistakes = buildBrowserPossibleMistakes(quality, brightness, contrast, darkRatio, ocrResult);
 
   return {
     evidenceDraft: {
-      extractedStudentWorkSummary: `已整理第 ${photoIndex}/${photoTotal} 张学习记录照片：${file.name}，尺寸 ${image.naturalWidth}x${image.naturalHeight}，清晰度判断为${quality}。请确认照片中的解题步骤、条件和检查点。`,
-      observedSteps: buildBrowserObservedSteps(image.naturalWidth, image.naturalHeight, brightness, contrast, edgeMean, darkRatio),
-      possibleMistakes: buildBrowserPossibleMistakes(quality, brightness, contrast, darkRatio),
-      domainSignals: ["math_thinking: practice photo", "student-created evidence confirmation needed"],
+      extractedStudentWorkSummary: buildPhotoSummary(file, image, quality, photoIndex, photoTotal, ocrResult),
+      observedSteps,
+      possibleMistakes,
+      recognizedText: ocrResult.text,
+      recognizedTextSummary: ocrSummary,
+      ocrConfidence: ocrResult.confidence,
+      ocrStatus: ocrResult.status,
+      domainSignals: buildPhotoDomainSignals(ocrResult),
       imageMetrics: { width: image.naturalWidth, height: image.naturalHeight, brightness, contrast, edgeMean, darkRatio, photoIndex, photoTotal },
-      confidence
+      confidence: inferEvidenceConfidence(confidence, ocrResult)
     },
     warnings: [
-      "当前为浏览器端学习记录整理；结果是图像质量和可见书写痕迹分析，不是文字转写。",
+      ocrResult.status === "recognized"
+        ? "已尝试识别照片中的文字；手写数学符号可能不完整，请学生或家长确认后再保存。"
+        : "当前未能完成文字识别，已保留图像质量和可见书写痕迹分析。",
       "请学生或家长确认照片中的实际解题步骤后再保存为学习证据。"
     ],
-    limitations: ["不会保存上传图片。", "不会把图片上传到外部服务。", "无法可靠读取手写文字或书籍原题内容。"]
+    limitations: ["不会保存上传图片。", "文字识别在浏览器中完成；首次使用会加载识别组件。", "手写数学符号、集合符号和公式可能识别不完整。"]
   };
 }
 
@@ -368,11 +380,19 @@ function mergePhotoEvidencePayloads(payloads) {
   if (payloads.length === 1) return payloads[0];
   const drafts = payloads.map((payload) => payload.evidenceDraft);
   const confidence = drafts.some((draft) => draft.confidence === "low") ? "low" : "medium";
+  const recognizedText = drafts
+    .map((draft, index) => draft.recognizedText ? `第 ${index + 1} 张识别文字：\n${draft.recognizedText}` : "")
+    .filter(Boolean)
+    .join("\n\n");
   return {
     evidenceDraft: {
       extractedStudentWorkSummary: `已整理 ${payloads.length} 张学习记录照片。请按照片顺序确认：题目条件是否完整、解题步骤是否连续、最后是否做了检查。`,
       observedSteps: drafts.flatMap((draft, index) => (draft.observedSteps || []).map((step) => `第 ${index + 1} 张：${step}`)),
       possibleMistakes: drafts.flatMap((draft, index) => (draft.possibleMistakes || []).map((item) => `第 ${index + 1} 张：${item}`)),
+      recognizedText,
+      recognizedTextSummary: summarizeOcrText(recognizedText, 260),
+      ocrConfidence: Math.round(mean(drafts.map((draft) => draft.ocrConfidence || 0))),
+      ocrStatus: recognizedText ? "recognized" : "unavailable",
       domainSignals: unique(drafts.flatMap((draft) => draft.domainSignals || [])),
       imageMetrics: { photoCount: payloads.length },
       confidence
@@ -380,6 +400,46 @@ function mergePhotoEvidencePayloads(payloads) {
     warnings: unique(payloads.flatMap((payload) => payload.warnings || [])),
     limitations: unique(payloads.flatMap((payload) => payload.limitations || []))
   };
+}
+
+async function recognizePhotoTextSafely(file, photoIndex, photoTotal) {
+  try {
+    const result = await recognizePhotoText(file);
+    if (!result.text) {
+      return { status: "empty", text: "", confidence: result.confidence || 0, words: [] };
+    }
+    return { status: "recognized", ...result };
+  } catch (error) {
+    return {
+      status: "failed",
+      text: "",
+      confidence: 0,
+      words: [],
+      error: error instanceof Error ? error.message : `第 ${photoIndex}/${photoTotal} 张照片文字识别失败。`
+    };
+  }
+}
+
+function buildPhotoSummary(file, image, quality, photoIndex, photoTotal, ocrResult) {
+  const base = `已整理第 ${photoIndex}/${photoTotal} 张学习记录照片：${file.name}，尺寸 ${image.naturalWidth}x${image.naturalHeight}，清晰度判断为${quality}。`;
+  if (ocrResult.status === "recognized") {
+    return `${base} 已识别出部分文字，平均置信度 ${ocrResult.confidence}%。请核对识别文字和照片中的实际步骤。`;
+  }
+  if (ocrResult.status === "empty") return `${base} 没有识别到稳定文字，请根据照片补充解题步骤。`;
+  return `${base} 文字识别暂不可用，请根据照片补充解题步骤。`;
+}
+
+function buildPhotoDomainSignals(ocrResult) {
+  const signals = ["math_thinking: practice photo", "student-created evidence confirmation needed"];
+  if (ocrResult.status === "recognized") signals.push("ocr: recognized text available");
+  if (/[{}∈∉⊂⊆∪∩|]/.test(ocrResult.text || "")) signals.push("math_notation: set symbols or braces detected");
+  return signals;
+}
+
+function inferEvidenceConfidence(imageConfidence, ocrResult) {
+  if (ocrResult.status === "recognized" && ocrResult.confidence >= 65) return "medium";
+  if (ocrResult.status === "recognized" && imageConfidence === "medium") return "medium";
+  return imageConfidence;
 }
 
 function loadImage(file) {
@@ -452,6 +512,10 @@ function renderPhotoEvidence(payload) {
     <div class="photo-draft">
       <strong>照片证据草稿 · ${escapeHtml(draft.confidence)} 置信度</strong>
       <p>${escapeHtml(draft.extractedStudentWorkSummary)}</p>
+      ${draft.recognizedTextSummary ? `
+        <h3>识别到的文字</h3>
+        <pre class="recognized-text">${escapeHtml(draft.recognizedTextSummary)}</pre>
+      ` : ""}
       <h3>识别到的可确认线索</h3>
       ${renderList(draft.observedSteps || [])}
       <h3>需要人工确认</h3>
@@ -471,8 +535,10 @@ function buildPhotoEvidenceText(payload) {
   const draft = payload.evidenceDraft;
   const steps = (draft.observedSteps || []).map((item) => `- ${item}`).join("\n");
   const checks = (draft.possibleMistakes || []).map((item) => `- ${item}`).join("\n");
+  const recognizedText = draft.recognizedText ? ["照片文字识别结果：", draft.recognizedText].join("\n") : "";
   return [
     draft.extractedStudentWorkSummary,
+    recognizedText,
     "照片识别线索：",
     steps,
     "学生/家长确认：请补充照片中实际写出的条件、步骤和最后检查。",
