@@ -22,6 +22,7 @@
     "家庭陪伴孩子成长的教育服务示意图": "Family education service image",
     "名亚洲学生新加坡留学服务经验": "Asian students served for Singapore study pathways",
     "每年经星系赴新加坡学生": "Students supported to Singapore each year",
+    "18年": "18 yrs",
     "中国大陆相关工作积累": "Years of related experience in mainland China",
     "成都": "Chengdu",
     "华西代表处": "West China Representative Office",
@@ -43,6 +44,7 @@
     "衔接新加坡中学会考路径，面向新加坡理工学院、初级学院及申请海外名校预科等多元方向。": "Connects students to Singapore O-Level pathways, with options including polytechnics, junior colleges, and foundation routes for overseas universities.",
     "主攻初级学院及海外名校预科": "Focused on junior colleges and global foundation routes",
     "新加坡高考项目": "Singapore A-Level Pathway",
+    "新加坡高考路径": "Singapore A-Level Pathway",
     "衔接新加坡高中毕业会考课程、考试与申请规划，拓展进入新加坡政府大学和QS前100顶尖名校机会。": "Supports Singapore A-Level curriculum, examination preparation, and application planning for Singapore public universities and QS Top 100 institutions.",
     "直通政府大学及QS前100名校": "Pathways to public universities and QS Top 100 institutions",
     "海外名校直通车": "Global University Express Pathway",
@@ -69,8 +71,10 @@
     "升学指导与路径衔接": "Progression Guidance and Pathway Connection",
     "结合学生阶段成果，持续评估中小学、中考、高考及海外名校方向，帮助家庭及时调整申请策略。": "Continuously reviews student progress and adjusts strategies across school, O-Level, A-Level, and overseas university routes.",
     "新加坡就读期间持续服务周期参考": "Reference service cycle during study in Singapore",
+    "5-10年": "5-10 yrs",
     "每月": "Monthly",
     "阶段性学习、出勤与活动信息反馈": "Learning, attendance, and activity updates",
+    "7个": "7 sites",
     "星系家园管理据点资料": "Star Alliance home-management site records",
 
     "以下案例均采用匿名化表达，隐去学生姓名、证件、联系方式等个人隐私，仅展示路径与结果类型。": "All cases are anonymized. Names, IDs, contact details, and other personal information are removed; only pathways and result types are shown.",
@@ -112,6 +116,7 @@
     "私人银行客户活动": "Private banking client events",
     "查看金融机构合作详情": "View Financial Partnership Details",
     "招商银行": "China Merchants Bank",
+    "中信银行": "CITIC Bank",
     "国际教育安全之路沙龙": "International Education Safety Path Salon",
     "招商银行相关分行及私人银行活动场景，联合星系国际教育开展国际教育主题分享，围绕子女国际化升学规划与新加坡精英教育路径展开交流。": "In China Merchants Bank branch and private banking events, Star Alliance Education shares international education insights around children's global pathway planning and Singapore elite education routes.",
     "查看活动详情": "View Event Details",
@@ -320,6 +325,7 @@
   function applyLanguage(lang) {
     const nextLang = lang === "en" ? "en" : "zh";
     document.documentElement.lang = nextLang === "en" ? "en" : "zh-CN";
+    document.body.dataset.lang = nextLang;
     document.querySelectorAll("[data-lang-toggle]").forEach((button) => {
       button.textContent = nextLang === "en" ? "中文" : "EN";
       button.setAttribute("aria-pressed", String(nextLang === "en"));

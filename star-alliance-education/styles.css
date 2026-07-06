@@ -423,6 +423,44 @@ h3 {
   margin: 18px 0 0;
 }
 
+.program-proof-en {
+  display: none;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.program-proof-en article {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 20px;
+}
+
+.program-proof-en strong,
+.program-proof-en span {
+  display: block;
+}
+
+.program-proof-en strong {
+  color: var(--primary);
+  font-size: 16px;
+}
+
+.program-proof-en span {
+  margin-top: 10px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+body[data-lang="en"] .wide-proof {
+  display: none;
+}
+
+body[data-lang="en"] .program-proof-en {
+  display: grid;
+}
+
 .wide-proof img,
 .service-photo img,
 .case-card img,
@@ -1068,6 +1106,10 @@ figcaption {
   transform: rotate(-28deg);
 }
 
+body[data-lang="en"] .watermarked::after {
+  content: "Star Alliance Education";
+}
+
 .proof-list {
   display: flex;
   flex-wrap: wrap;
@@ -1263,6 +1305,7 @@ figcaption {
 
   .hero-stat-grid,
   .program-grid,
+  .program-proof-en,
   .service-grid,
   .partner-showcase,
   .credential-gallery,
