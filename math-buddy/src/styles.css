@@ -447,13 +447,38 @@ textarea:focus {
   padding: 12px;
 }
 
-#photoPreview {
+.photo-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.photo-preview-card {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.photo-preview-card img {
   width: 100%;
-  max-height: 260px;
+  aspect-ratio: 4 / 3;
   border: 1px solid var(--line);
   border-radius: 8px;
-  object-fit: contain;
+  object-fit: cover;
   background: white;
+}
+
+.photo-preview-card figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.compact-button {
+  padding: 6px 8px;
 }
 
 .photo-evidence-result {

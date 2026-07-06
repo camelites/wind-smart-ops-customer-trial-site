@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Math Buddy · 暑假数学思维学习工具</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./src/styles.css?v=20260705c" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260706" />
   </head>
   <body>
     <main class="app-shell">
@@ -52,11 +52,11 @@
             <div class="photo-evidence-box">
               <label>
                 上传笔记或解题照片
-                <input id="photoInput" type="file" accept="image/*" capture="environment" />
+                <input id="photoInput" type="file" accept="image/*" capture="environment" multiple />
               </label>
-              <img id="photoPreview" alt="练习照片预览" hidden />
+              <div id="photoPreview" class="photo-preview-grid" hidden></div>
               <button id="recognizePhoto" class="ghost" type="button">帮我整理学习记录</button>
-              <div id="photoEvidencePanel" class="photo-evidence-result muted">可以选择相册里的笔记，也可以用手机直接拍照。上传后，我会帮你整理学习记录草稿。</div>
+              <div id="photoEvidencePanel" class="photo-evidence-result muted">可以一次选择多张笔记照片，也可以用手机连续拍照。上传后，我会帮你整理学习记录草稿。</div>
             </div>
             <button id="submitLearningRecord" class="primary practice-submit daily-submit" type="button" disabled>先上传并整理学习记录</button>
             <textarea id="evidence" hidden></textarea>
@@ -133,6 +133,6 @@
         </section>
       </section>
     </main>
-    <script type="module" src="./src/app.js?v=20260705c"></script>
+    <script type="module" src="./src/app.js?v=20260706"></script>
   </body>
 </html>

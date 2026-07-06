@@ -11,9 +11,9 @@ import {
   getTaskForDate,
   restoreMemory,
   sanitizePersistencePayload
-} from "./mathBuddyEngine.js?v=20260705c";
-import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260705c";
-import { STORAGE_KEYS } from "./storageKeys.js?v=20260705c";
+} from "./mathBuddyEngine.js?v=20260706";
+import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260706";
+import { STORAGE_KEYS } from "./storageKeys.js?v=20260706";
 
 const initialToday = formatLocalDateIso();
 
@@ -25,7 +25,8 @@ const state = {
     toc: MATH_THINKING_CHAPTER_2_PROFILE.units.map((unit) => unit.title)
   },
   contentProfile: MATH_THINKING_CHAPTER_2_PROFILE,
-  photoFile: null,
+  photoItems: [],
+  nextPhotoId: 1,
   photoRecognition: null,
   memory: restoreMemory(localStorage.getItem(STORAGE_KEYS.memory)),
   dailySubmissions: restoreDailySubmissions(localStorage.getItem(STORAGE_KEYS.dailySubmissions)),
@@ -79,6 +80,7 @@ function init() {
     if (event.target?.id === "submitPractice") onSubmitPractice();
     if (event.target?.id === "submitLearningRecord") onSubmitLearningRecord();
     if (event.target?.id === "submitDiscovery") onSubmitDiscovery();
+    if (event.target?.dataset?.removePhoto) onRemovePhoto(Number(event.target.dataset.removePhoto));
   });
   document.addEventListener("input", (event) => {
     if (event.target?.classList?.contains("practice-answer") || event.target?.id === "reflection") updateSubmitButtonState();
@@ -154,7 +156,8 @@ function onSubmitLearningRecord() {
   if (!text) return updateSubmitButtonState();
   submission.learningRecord = {
     submittedAt: new Date().toISOString(),
-    text
+    text,
+    photoCount: state.photoItems.length
   };
   persistDailySubmissions();
   finalizeTaskIfReady(task);
@@ -209,62 +212,111 @@ function onResetMemory() {
   state.lastSummary = null;
   elements.evidence.value = "";
   elements.reflection.value = "";
-  state.photoFile = null;
+  clearPhotoItems();
   state.photoRecognition = null;
-  elements.photoPreview.hidden = true;
-  elements.photoPreview.removeAttribute("src");
-  elements.photoEvidencePanel.textContent = "可以选择相册里的笔记，也可以用手机直接拍照。上传后，我会帮你整理学习记录草稿。";
+  renderPhotoPreviews();
+  elements.photoEvidencePanel.textContent = "可以一次选择多张笔记照片，也可以用手机连续拍照。上传后，我会帮你整理学习记录草稿。";
   renderAll();
 }
 
 function onPhotoSelected(event) {
-  const file = event.target.files?.[0];
-  state.photoFile = file || null;
+  const files = Array.from(event.target.files || []).filter((file) => file.type.startsWith("image/"));
   state.photoRecognition = null;
-  if (!file) {
-    elements.photoPreview.hidden = true;
-    elements.photoPreview.removeAttribute("src");
-    elements.evidence.value = "";
-    elements.photoEvidencePanel.textContent = "可以选择相册里的笔记，也可以用手机直接拍照。上传后，我会帮你整理学习记录草稿。";
+  if (!files.length && !state.photoItems.length) {
+    renderPhotoPreviews();
+    elements.photoEvidencePanel.textContent = "请拍照或选择至少一张学习记录照片。";
     return;
   }
 
-  elements.photoPreview.src = URL.createObjectURL(file);
-  elements.photoPreview.hidden = false;
-  elements.photoEvidencePanel.textContent = `已选择：${file.name}。点击“帮我整理学习记录”生成学习记录草稿。`;
+  files.forEach((file) => {
+    state.photoItems.push({
+      id: state.nextPhotoId,
+      file,
+      url: URL.createObjectURL(file)
+    });
+    state.nextPhotoId += 1;
+  });
+  event.target.value = "";
+  renderPhotoPreviews();
+  elements.photoEvidencePanel.textContent = `已选择 ${state.photoItems.length} 张照片。点击“帮我整理学习记录”生成学习记录草稿。`;
   updateSubmitButtonState();
 }
 
 async function onRecognizePhoto() {
-  if (!state.photoFile) {
-    elements.photoEvidencePanel.textContent = "请先拍照或选择一张练习照片。";
+  if (!state.photoItems.length) {
+    elements.photoEvidencePanel.textContent = "请先拍照或选择至少一张学习记录照片。";
     return;
   }
 
   elements.recognizePhoto.disabled = true;
-  elements.photoEvidencePanel.textContent = "正在整理照片线索...";
+  elements.photoEvidencePanel.textContent = `正在整理 ${state.photoItems.length} 张学习记录照片...`;
   try {
-    const formData = new FormData();
-    formData.append("image", state.photoFile);
-    const response = await fetch("/api/photo-evidence", { method: "POST", body: formData });
-    const payload = await response.json();
-    if (!response.ok) throw new Error(payload?.error || "照片识别失败。");
-    state.photoRecognition = payload;
-    renderPhotoEvidence(payload);
+    if (state.photoItems.length === 1) {
+      const formData = new FormData();
+      formData.append("image", state.photoItems[0].file);
+      const response = await fetch("/api/photo-evidence", { method: "POST", body: formData });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload?.error || "照片识别失败。");
+      state.photoRecognition = payload;
+      renderPhotoEvidence(payload);
+      return;
+    }
+    throw new Error("多张照片使用浏览器端整理。");
   } catch (error) {
     try {
-      const payload = await analyzePracticePhotoInBrowser(state.photoFile);
+      const payload = await analyzeSelectedPhotosInBrowser(state.photoItems);
       state.photoRecognition = payload;
       renderPhotoEvidence(payload);
     } catch (fallbackError) {
-      elements.photoEvidencePanel.textContent = fallbackError instanceof Error ? fallbackError.message : "照片线索整理失败。";
+      elements.photoEvidencePanel.textContent = fallbackError instanceof Error ? fallbackError.message : "学习记录整理失败。";
     }
   } finally {
     elements.recognizePhoto.disabled = false;
   }
 }
 
-async function analyzePracticePhotoInBrowser(file) {
+async function analyzeSelectedPhotosInBrowser(photoItems) {
+  const payloads = [];
+  for (let index = 0; index < photoItems.length; index += 1) {
+    payloads.push(await analyzePracticePhotoInBrowser(photoItems[index].file, index + 1, photoItems.length));
+  }
+  return mergePhotoEvidencePayloads(payloads);
+}
+
+function onRemovePhoto(photoId) {
+  const index = state.photoItems.findIndex((item) => item.id === photoId);
+  if (index === -1) return;
+  URL.revokeObjectURL(state.photoItems[index].url);
+  state.photoItems.splice(index, 1);
+  state.photoRecognition = null;
+  renderPhotoPreviews();
+  elements.photoEvidencePanel.textContent = state.photoItems.length
+    ? `已保留 ${state.photoItems.length} 张照片。点击“帮我整理学习记录”重新生成草稿。`
+    : "可以一次选择多张笔记照片，也可以用手机连续拍照。上传后，我会帮你整理学习记录草稿。";
+  updateSubmitButtonState();
+}
+
+function clearPhotoItems() {
+  state.photoItems.forEach((item) => URL.revokeObjectURL(item.url));
+  state.photoItems = [];
+}
+
+function renderPhotoPreviews() {
+  elements.photoPreview.hidden = state.photoItems.length === 0;
+  elements.photoPreview.innerHTML = state.photoItems
+    .map((item, index) => `
+      <figure class="photo-preview-card">
+        <img src="${item.url}" alt="学习记录照片 ${index + 1}" />
+        <figcaption>
+          <span>第 ${index + 1} 张</span>
+          <button class="ghost compact-button" type="button" data-remove-photo="${item.id}">移除</button>
+        </figcaption>
+      </figure>
+    `)
+    .join("");
+}
+
+async function analyzePracticePhotoInBrowser(file, photoIndex = 1, photoTotal = 1) {
   const image = await loadImage(file);
   const maxSide = 360;
   const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
@@ -297,18 +349,36 @@ async function analyzePracticePhotoInBrowser(file) {
 
   return {
     evidenceDraft: {
-      extractedStudentWorkSummary: `已整理一张学生练习照片：${file.name}，尺寸 ${image.naturalWidth}x${image.naturalHeight}，清晰度判断为${quality}。请确认照片中的解题步骤、条件和检查点。`,
+      extractedStudentWorkSummary: `已整理第 ${photoIndex}/${photoTotal} 张学习记录照片：${file.name}，尺寸 ${image.naturalWidth}x${image.naturalHeight}，清晰度判断为${quality}。请确认照片中的解题步骤、条件和检查点。`,
       observedSteps: buildBrowserObservedSteps(image.naturalWidth, image.naturalHeight, brightness, contrast, edgeMean, darkRatio),
       possibleMistakes: buildBrowserPossibleMistakes(quality, brightness, contrast, darkRatio),
       domainSignals: ["math_thinking: practice photo", "student-created evidence confirmation needed"],
-      imageMetrics: { width: image.naturalWidth, height: image.naturalHeight, brightness, contrast, edgeMean, darkRatio },
+      imageMetrics: { width: image.naturalWidth, height: image.naturalHeight, brightness, contrast, edgeMean, darkRatio, photoIndex, photoTotal },
       confidence
     },
     warnings: [
-      "当前为浏览器端照片线索整理；结果是图像质量和可见书写痕迹分析，不是文字转写。",
+      "当前为浏览器端学习记录整理；结果是图像质量和可见书写痕迹分析，不是文字转写。",
       "请学生或家长确认照片中的实际解题步骤后再保存为学习证据。"
     ],
     limitations: ["不会保存上传图片。", "不会把图片上传到外部服务。", "无法可靠读取手写文字或书籍原题内容。"]
+  };
+}
+
+function mergePhotoEvidencePayloads(payloads) {
+  if (payloads.length === 1) return payloads[0];
+  const drafts = payloads.map((payload) => payload.evidenceDraft);
+  const confidence = drafts.some((draft) => draft.confidence === "low") ? "low" : "medium";
+  return {
+    evidenceDraft: {
+      extractedStudentWorkSummary: `已整理 ${payloads.length} 张学习记录照片。请按照片顺序确认：题目条件是否完整、解题步骤是否连续、最后是否做了检查。`,
+      observedSteps: drafts.flatMap((draft, index) => (draft.observedSteps || []).map((step) => `第 ${index + 1} 张：${step}`)),
+      possibleMistakes: drafts.flatMap((draft, index) => (draft.possibleMistakes || []).map((item) => `第 ${index + 1} 张：${item}`)),
+      domainSignals: unique(drafts.flatMap((draft) => draft.domainSignals || [])),
+      imageMetrics: { photoCount: payloads.length },
+      confidence
+    },
+    warnings: unique(payloads.flatMap((payload) => payload.warnings || [])),
+    limitations: unique(payloads.flatMap((payload) => payload.limitations || []))
   };
 }
 
@@ -369,6 +439,10 @@ function stddev(values, average) {
 function round(value, digits) {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
+}
+
+function unique(values) {
+  return Array.from(new Set(values.filter(Boolean)));
 }
 
 function renderPhotoEvidence(payload) {
