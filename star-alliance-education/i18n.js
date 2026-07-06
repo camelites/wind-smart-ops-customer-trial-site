@@ -322,6 +322,13 @@
     });
   }
 
+  function translateImages(lang) {
+    document.querySelectorAll("img[data-en-src]").forEach((image) => {
+      if (!image.dataset.zhSrc) image.dataset.zhSrc = image.getAttribute("src");
+      image.setAttribute("src", lang === "en" ? image.dataset.enSrc : image.dataset.zhSrc);
+    });
+  }
+
   function applyLanguage(lang) {
     const nextLang = lang === "en" ? "en" : "zh";
     document.documentElement.lang = nextLang === "en" ? "en" : "zh-CN";
@@ -335,6 +342,7 @@
     while (walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach((node) => translateTextNode(node, nextLang));
     translateAttributes(nextLang);
+    translateImages(nextLang);
     if (nextLang === "en") {
       document.title = titleTranslations[document.title] || normalize(document.body.dataset.zhTitle)
         .split(" | ")

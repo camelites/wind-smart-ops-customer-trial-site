@@ -453,14 +453,6 @@ h3 {
   line-height: 1.7;
 }
 
-body[data-lang="en"] .wide-proof {
-  display: none;
-}
-
-body[data-lang="en"] .program-proof-en {
-  display: grid;
-}
-
 .wide-proof img,
 .service-photo img,
 .case-card img,

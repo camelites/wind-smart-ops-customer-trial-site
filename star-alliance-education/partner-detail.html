@@ -87,6 +87,7 @@
           title: "走进教育系统与重点学校，持续开展新加坡教育项目交流与升学规划活动",
           summary: "星系国际教育围绕成都市高新区教育局相关平台、成都重点高中及多地学校，开展项目推介、专家讲座、国际理解教育与升学规划说明，帮助学校与家庭更清晰地了解新加坡教育路径。",
           heroImage: "assets/site/partner-activity-overview.webp",
+          heroImageEn: "assets/site/partner-activity-overview-en.webp",
           heroCaption: "2021-2025 社会活动总览资料，涵盖政府合作、学校讲座、金融机构联办与媒体曝光等场景。",
           tags: ["教育系统合作", "成都重点高中", "项目推介", "家校活动"],
           points: [
@@ -211,6 +212,7 @@
       document.getElementById("partner-summary").textContent = current.summary;
       document.getElementById("partner-hero-image").src = current.heroImage;
       document.getElementById("partner-hero-image").alt = current.title;
+      if (current.heroImageEn) document.getElementById("partner-hero-image").dataset.enSrc = current.heroImageEn;
       document.getElementById("partner-hero-caption").textContent = current.heroCaption;
       document.getElementById("partner-value").textContent = current.value;
       document.getElementById("partner-gallery-intro").textContent = current.galleryIntro;
@@ -233,7 +235,7 @@
         .filter(([partnerKey]) => partnerKey !== key)
         .map(([partnerKey, item]) => `
           <a class="partner-related-card" href="partner-detail.html?type=${partnerKey}">
-            <img src="${item.heroImage}" alt="${item.label}">
+            <img src="${item.heroImage}" ${item.heroImageEn ? `data-en-src="${item.heroImageEn}"` : ""} alt="${item.label}">
             <div>
               <p>${item.label}</p>
               <h3>${item.title}</h3>
