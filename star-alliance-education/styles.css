@@ -213,8 +213,9 @@ h3 {
 
 .hero-visual img {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
+  aspect-ratio: 1320 / 551;
+  background: var(--surface-tint);
+  object-fit: contain;
 }
 
 .hero-visual figcaption {
