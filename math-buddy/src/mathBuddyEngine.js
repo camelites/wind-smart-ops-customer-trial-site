@@ -284,6 +284,26 @@ export function completeTask({
   };
 }
 
+export function rebuildMemoryFromDailySubmissions({ memory = EMPTY_MEMORY, tasks = [], dailySubmissions = {} } = {}) {
+  let nextMemory = restoreMemory(sanitizePersistencePayload(memory));
+  let restoredCount = 0;
+  for (const task of tasks) {
+    const submission = dailySubmissions?.[task.taskId];
+    if (!submission?.practice?.result || !submission?.learningRecord?.text || !submission?.discovery?.text) continue;
+    if (nextMemory.events.some((event) => event.sourceId === task.taskId)) continue;
+    nextMemory = completeTask({
+      memory: nextMemory,
+      task,
+      evidence: submission.learningRecord.text,
+      reflection: submission.discovery.text,
+      practiceResult: submission.practice.result,
+      completedAt: submission.discovery.submittedAt || submission.learningRecord.submittedAt || submission.practice.submittedAt || `${task.date}T09:00:00.000Z`
+    });
+    restoredCount += 1;
+  }
+  return { memory: nextMemory, restoredCount };
+}
+
 export function buildFeedback({ task, evidence = "", reflection = "", memory = EMPTY_MEMORY, completed = false }) {
   const cleanEvidence = normalizeStudentText(evidence);
   const cleanReflection = normalizeStudentText(reflection);

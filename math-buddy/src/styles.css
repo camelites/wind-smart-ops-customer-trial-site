@@ -671,6 +671,26 @@ li {
   gap: 12px;
 }
 
+.local-memory-status {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f7faf8;
+  padding: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.local-memory-status strong {
+  color: var(--sage-dark);
+}
+
+.local-memory-status p {
+  margin: 4px 0 0;
+}
+
 .memory-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

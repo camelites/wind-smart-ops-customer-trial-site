@@ -9,12 +9,13 @@ import {
   formatLocalDateIso,
   generateSummerPlan,
   getTaskForDate,
+  rebuildMemoryFromDailySubmissions,
   restoreMemory,
   sanitizePersistencePayload
-} from "./mathBuddyEngine.js?v=20260706b";
-import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260706b";
-import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260706b";
-import { STORAGE_KEYS } from "./storageKeys.js?v=20260706b";
+} from "./mathBuddyEngine.js?v=20260706c";
+import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260706c";
+import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260706c";
+import { STORAGE_KEYS } from "./storageKeys.js?v=20260706c";
 
 const initialToday = formatLocalDateIso();
 
@@ -62,6 +63,7 @@ const elements = {
   dailySummaryPanel: document.querySelector("#dailySummaryPanel"),
   feedbackPanel: document.querySelector("#feedbackPanel"),
   memoryPanel: document.querySelector("#memoryPanel"),
+  localMemoryStatus: document.querySelector("#localMemoryStatus"),
   timeline: document.querySelector("#timeline"),
   generatePlan: document.querySelector("#generatePlan"),
   resetMemory: document.querySelector("#resetMemory")
@@ -122,6 +124,7 @@ function onGeneratePlan() {
     toc: MATH_THINKING_CHAPTER_2_PROFILE.units.map((unit) => unit.title)
   };
   state.plan = generateSummerPlan({ book: state.book, settings: state.settings, memory: state.memory, contentProfile: state.contentProfile });
+  recoverMemoryFromStoredSubmissions();
   state.selectedDate = state.plan.tasks.some((task) => task.date === state.selectedDate) ? state.selectedDate : chooseDefaultSelectedDate();
   state.hydratedTaskId = null;
   state.lastPracticeResult = null;
@@ -556,7 +559,20 @@ function renderAll(keepWriting = false) {
   renderLearningRecordControls();
   renderDailySummary();
   renderMemory();
+  renderLocalMemoryStatus();
   renderTimeline();
+}
+
+function recoverMemoryFromStoredSubmissions() {
+  if (!state.plan?.tasks?.length) return;
+  const { memory, restoredCount } = rebuildMemoryFromDailySubmissions({
+    memory: state.memory,
+    tasks: state.plan.tasks,
+    dailySubmissions: state.dailySubmissions
+  });
+  if (!restoredCount) return;
+  state.memory = memory;
+  localStorage.setItem(STORAGE_KEYS.memory, sanitizePersistencePayload(state.memory));
 }
 
 function syncCurrentSubmissionState() {
@@ -812,9 +828,28 @@ function renderMemory() {
   `;
 }
 
+function renderLocalMemoryStatus() {
+  const memoryRaw = localStorage.getItem(STORAGE_KEYS.memory);
+  const submissionsRaw = localStorage.getItem(STORAGE_KEYS.dailySubmissions);
+  const submissionCount = Object.keys(state.dailySubmissions || {}).length;
+  const completedSubmissionCount = countCompletedSubmissions();
+  const origin = window.location.origin;
+  elements.localMemoryStatus.innerHTML = `
+    <strong>本机记忆状态</strong>
+    <span>成长记忆：${state.memory.events.length} 条</span>
+    <span>每日提交：${submissionCount} 天，其中 ${completedSubmissionCount} 天三项已完成</span>
+    <span>当前浏览器来源：${escapeHtml(origin)}</span>
+    <p>${memoryRaw || submissionsRaw ? "已读取到这个浏览器里的本地学习数据。" : "这个浏览器里还没有读到旧学习数据；如果之前是在微信、另一台手机、localhost 或别的网址使用，数据不会自动出现在这里。"}</p>
+  `;
+}
+
+function countCompletedSubmissions() {
+  return Object.values(state.dailySubmissions || {}).filter((submission) => submission?.practice && submission?.learningRecord && submission?.discovery).length;
+}
+
 function renderTimeline() {
   if (!state.memory.events.length) {
-    elements.timeline.innerHTML = `<p class="muted">还没有学习记录。完成今日任务后，这里会出现成长记忆事件。</p>`;
+    elements.timeline.innerHTML = `<p class="muted">这个浏览器里还没有成长记忆。每天分别提交练习题、学习记录和今天的小发现后，这里会出现成长记忆事件。</p>`;
     return;
   }
   elements.timeline.innerHTML = state.memory.events
