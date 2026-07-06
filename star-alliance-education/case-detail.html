@@ -105,6 +105,7 @@
           title: "通过阶段化规划进入更高层级升学通道，连接新加坡及海外名校机会",
           summary: "面向希望通过新加坡体系进入更高层级大学机会的学生，星系国际教育提供考试路径、课程节奏和申请衔接的综合规划支持。",
           image: "assets/site/case-student-photo-1.webp",
+          watermark: true,
           caption: "学生升学成果照片资料，已按公开展示要求处理。",
           tags: ["新加坡体系", "阶段提升", "名校衔接"],
           points: [
@@ -133,6 +134,7 @@
           title: "结合学生背景与目标院校，完成个性化申请定位和录取衔接",
           summary: "星系国际教育根据学生的学术背景、语言基础、活动经历和家庭期待，制定更贴合个人情况的申请方案，提升目标院校匹配度。",
           image: "assets/site/case-student-photo-2.webp",
+          watermark: true,
           caption: "海外名校升学成果照片资料，保留公开展示所需信息。",
           tags: ["个性化申请", "背景梳理", "录取衔接"],
           points: [
@@ -152,6 +154,7 @@
       document.getElementById("case-summary").textContent = current.summary;
       document.getElementById("case-image").src = current.image;
       document.getElementById("case-image").alt = current.title;
+      document.querySelector(".case-detail-image").classList.toggle("watermarked", Boolean(current.watermark));
       document.getElementById("case-caption").textContent = current.caption;
       document.getElementById("case-value").textContent = current.value;
       document.getElementById("case-tags").innerHTML = current.tags.map((tag) => `<span>${tag}</span>`).join("");
@@ -161,7 +164,9 @@
         .filter(([caseKey]) => caseKey !== key)
         .map(([caseKey, item]) => `
           <a class="case-card" href="case-detail.html?case=${caseKey}">
-            <img src="${item.image}" alt="${item.label}">
+            ${item.watermark
+              ? `<figure class="case-image watermarked"><img src="${item.image}" alt="${item.label}"></figure>`
+              : `<img src="${item.image}" alt="${item.label}">`}
             <div>
               <p>${item.label}</p>
               <h3>${item.title}</h3>
