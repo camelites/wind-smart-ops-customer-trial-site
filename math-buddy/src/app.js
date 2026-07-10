@@ -12,10 +12,10 @@ import {
   rebuildMemoryFromDailySubmissions,
   restoreMemory,
   sanitizePersistencePayload
-} from "./mathBuddyEngine.js?v=20260706c";
-import { MATH_THINKING_CHAPTER_2_PROFILE } from "./mathThinkingChapter2Content.js?v=20260706c";
-import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260706c";
-import { STORAGE_KEYS } from "./storageKeys.js?v=20260706c";
+} from "./mathBuddyEngine.js?v=20260710";
+import { MATH_THINKING_CURATED_PROFILE } from "./mathThinkingCuratedContent.js?v=20260710";
+import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260710";
+import { STORAGE_KEYS } from "./storageKeys.js?v=20260710";
 
 const initialToday = formatLocalDateIso();
 
@@ -23,10 +23,10 @@ const state = {
   settings: { ...DEFAULT_SETTINGS },
   book: {
     ...DEFAULT_BOOK,
-    title: MATH_THINKING_CHAPTER_2_PROFILE.bookTitle,
-    toc: MATH_THINKING_CHAPTER_2_PROFILE.units.map((unit) => unit.title)
+    title: MATH_THINKING_CURATED_PROFILE.bookTitle,
+    toc: MATH_THINKING_CURATED_PROFILE.units.map((unit) => unit.title)
   },
-  contentProfile: MATH_THINKING_CHAPTER_2_PROFILE,
+  contentProfile: MATH_THINKING_CURATED_PROFILE,
   photoItems: [],
   nextPhotoId: 1,
   photoRecognition: null,
@@ -120,8 +120,8 @@ function onGeneratePlan() {
   };
   state.book = {
     ...state.book,
-    title: MATH_THINKING_CHAPTER_2_PROFILE.bookTitle,
-    toc: MATH_THINKING_CHAPTER_2_PROFILE.units.map((unit) => unit.title)
+    title: MATH_THINKING_CURATED_PROFILE.bookTitle,
+    toc: MATH_THINKING_CURATED_PROFILE.units.map((unit) => unit.title)
   };
   state.plan = generateSummerPlan({ book: state.book, settings: state.settings, memory: state.memory, contentProfile: state.contentProfile });
   recoverMemoryFromStoredSubmissions();
