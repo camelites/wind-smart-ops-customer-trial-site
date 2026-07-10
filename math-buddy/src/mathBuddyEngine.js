@@ -304,6 +304,53 @@ export function rebuildMemoryFromDailySubmissions({ memory = EMPTY_MEMORY, tasks
   return { memory: nextMemory, restoredCount };
 }
 
+export function completeChapterAssessment({
+  memory = EMPTY_MEMORY,
+  assessment,
+  result,
+  completedAt = new Date().toISOString()
+}) {
+  if (!assessment) throw new Error("assessment is required");
+  const previousEvents = Array.isArray(memory.events) ? memory.events : [];
+  const weakKnowledgePoints = Array.isArray(result?.weakKnowledgePoints) ? result.weakKnowledgePoints : [];
+  const event = {
+    id: `memory-${assessment.assessmentId}`,
+    memoryType: "chapter_assessment",
+    sourceType: "chapter_test",
+    sourceId: assessment.assessmentId,
+    confidence: Number(result?.accuracy || 0) >= Number(assessment.passingAccuracy || 80) ? "high" : "medium",
+    summary: `${assessment.title} 已完成：${result?.correct || 0}/${result?.total || 0} 题正确，正确率 ${result?.accuracy || 0}%。`,
+    evidence: {
+      taskTitle: assessment.title,
+      evidenceLength: 0,
+      reflectionLength: 0,
+      reasoningSignals: ["chapter_review", "self_check"],
+      practiceAccuracy: result?.accuracy || 0,
+      weakKnowledgePoints
+    },
+    createdAt: completedAt,
+    usableForContext: true,
+    archived: false
+  };
+  const events = upsertEvent(previousEvents, event);
+  const progress = buildProgress(events);
+  const signals = collectSignals(events);
+  const motivationStyle = inferMotivationStyle(progress, signals, memory.preferences?.motivationStyle);
+  return {
+    goal: memory.goal || DEFAULT_SETTINGS.goal,
+    preferences: {
+      ...memory.preferences,
+      motivationStyle,
+      preferredTaskSize: memory.preferences?.preferredTaskSize || "25 分钟小任务"
+    },
+    weaknesses: signals.weaknesses,
+    strengths: signals.strengths,
+    progress,
+    next_goal: weakKnowledgePoints.length ? `复盘第二章测试错点：${weakKnowledgePoints[0]}。` : "第二章测试表现稳定，可以继续学习第三章逻辑。",
+    events
+  };
+}
+
 export function buildFeedback({ task, evidence = "", reflection = "", memory = EMPTY_MEMORY, completed = false }) {
   const cleanEvidence = normalizeStudentText(evidence);
   const cleanReflection = normalizeStudentText(reflection);

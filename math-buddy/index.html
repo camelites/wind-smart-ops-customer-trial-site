@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Math Buddy · 暑假数学思维学习工具</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./src/styles.css?v=20260710" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260710b" />
   </head>
   <body>
     <main class="app-shell">
@@ -16,6 +16,7 @@
         </div>
         <nav class="app-nav" aria-label="应用导航">
           <button class="nav-button active" data-view="today" type="button">今日任务</button>
+          <button class="nav-button" data-view="chapter-test" type="button">第二章测试</button>
           <button class="nav-button" data-view="progress" type="button">成长记录</button>
           <button class="nav-button" data-view="settings" type="button">设置</button>
         </nav>
@@ -70,6 +71,17 @@
         </section>
 
         <section id="feedbackPanel" class="panel student-feedback"></section>
+      </section>
+
+      <section class="page-shell" data-page="chapter-test">
+        <header class="page-heading">
+          <p class="eyebrow">Chapter Check</p>
+          <h1>第二章综合测试</h1>
+        </header>
+        <section class="daily-grid">
+          <article id="chapterAssessmentPanel" class="panel chapter-assessment-panel"></article>
+          <article id="chapterAssessmentSummary" class="panel student-summary"></article>
+        </section>
       </section>
 
       <section class="page-shell" data-page="progress">
@@ -134,6 +146,6 @@
         </section>
       </section>
     </main>
-    <script type="module" src="./src/app.js?v=20260710"></script>
+    <script type="module" src="./src/app.js?v=20260710b"></script>
   </body>
 </html>

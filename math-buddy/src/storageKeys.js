@@ -2,5 +2,6 @@
 // during UI or content updates, or existing student progress will be lost.
 export const STORAGE_KEYS = Object.freeze({
   memory: "math-buddy-growth-memory-v1",
-  dailySubmissions: "math-buddy-daily-submissions-v1"
+  dailySubmissions: "math-buddy-daily-submissions-v1",
+  chapterAssessments: "math-buddy-chapter-assessments-v1"
 });

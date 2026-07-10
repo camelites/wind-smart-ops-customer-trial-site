@@ -4,6 +4,7 @@ import {
   EMPTY_MEMORY,
   buildFeedback,
   buildDailySummary,
+  completeChapterAssessment,
   completeTask,
   evaluatePracticeAnswers,
   formatLocalDateIso,
@@ -12,10 +13,11 @@ import {
   rebuildMemoryFromDailySubmissions,
   restoreMemory,
   sanitizePersistencePayload
-} from "./mathBuddyEngine.js?v=20260710";
-import { MATH_THINKING_CURATED_PROFILE } from "./mathThinkingCuratedContent.js?v=20260710";
-import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260710";
-import { STORAGE_KEYS } from "./storageKeys.js?v=20260710";
+} from "./mathBuddyEngine.js?v=20260710b";
+import { CHAPTER_2_ASSESSMENT } from "./chapterAssessments.js?v=20260710b";
+import { MATH_THINKING_CURATED_PROFILE } from "./mathThinkingCuratedContent.js?v=20260710b";
+import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260710b";
+import { STORAGE_KEYS } from "./storageKeys.js?v=20260710b";
 
 const initialToday = formatLocalDateIso();
 
@@ -32,6 +34,7 @@ const state = {
   photoRecognition: null,
   memory: restoreMemory(localStorage.getItem(STORAGE_KEYS.memory)),
   dailySubmissions: restoreDailySubmissions(localStorage.getItem(STORAGE_KEYS.dailySubmissions)),
+  chapterAssessments: restoreChapterAssessments(localStorage.getItem(STORAGE_KEYS.chapterAssessments)),
   plan: null,
   today: initialToday,
   selectedDate: initialToday,
@@ -62,6 +65,8 @@ const elements = {
   reflection: document.querySelector("#reflection"),
   dailySummaryPanel: document.querySelector("#dailySummaryPanel"),
   feedbackPanel: document.querySelector("#feedbackPanel"),
+  chapterAssessmentPanel: document.querySelector("#chapterAssessmentPanel"),
+  chapterAssessmentSummary: document.querySelector("#chapterAssessmentSummary"),
   memoryPanel: document.querySelector("#memoryPanel"),
   localMemoryStatus: document.querySelector("#localMemoryStatus"),
   timeline: document.querySelector("#timeline"),
@@ -83,10 +88,12 @@ function init() {
     if (event.target?.id === "submitPractice") onSubmitPractice();
     if (event.target?.id === "submitLearningRecord") onSubmitLearningRecord();
     if (event.target?.id === "submitDiscovery") onSubmitDiscovery();
+    if (event.target?.id === "submitChapterAssessment") onSubmitChapterAssessment();
     if (event.target?.dataset?.removePhoto) onRemovePhoto(Number(event.target.dataset.removePhoto));
   });
   document.addEventListener("input", (event) => {
     if (event.target?.classList?.contains("practice-answer") || event.target?.id === "reflection") updateSubmitButtonState();
+    if (event.target?.classList?.contains("chapter-test-answer")) updateChapterAssessmentButtonState();
   });
   elements.resetMemory.addEventListener("click", onResetMemory);
   elements.unitSelect.addEventListener("change", () => {
@@ -184,6 +191,28 @@ function onSubmitDiscovery() {
   renderAll(true);
 }
 
+function onSubmitChapterAssessment() {
+  const existing = getChapterAssessmentSubmission();
+  if (existing?.result) return;
+  if (!areChapterAssessmentAnswersComplete()) return updateChapterAssessmentButtonState();
+  const answers = collectChapterAssessmentAnswers();
+  const result = evaluatePracticeAnswers(CHAPTER_2_ASSESSMENT.practiceSet, answers);
+  state.chapterAssessments[CHAPTER_2_ASSESSMENT.assessmentId] = {
+    submittedAt: new Date().toISOString(),
+    result,
+    answers
+  };
+  persistChapterAssessments();
+  state.memory = completeChapterAssessment({
+    memory: state.memory,
+    assessment: CHAPTER_2_ASSESSMENT,
+    result,
+    completedAt: state.chapterAssessments[CHAPTER_2_ASSESSMENT.assessmentId].submittedAt
+  });
+  localStorage.setItem(STORAGE_KEYS.memory, sanitizePersistencePayload(state.memory));
+  renderAll(true);
+}
+
 function finalizeTaskIfReady(task) {
   const submission = getTaskSubmission(task);
   if (isTaskDone(task) || !submission.practice || !submission.learningRecord || !submission.discovery) return;
@@ -210,8 +239,10 @@ function finalizeTaskIfReady(task) {
 function onResetMemory() {
   state.memory = restoreMemory("");
   state.dailySubmissions = {};
+  state.chapterAssessments = {};
   localStorage.removeItem(STORAGE_KEYS.memory);
   localStorage.removeItem(STORAGE_KEYS.dailySubmissions);
+  localStorage.removeItem(STORAGE_KEYS.chapterAssessments);
   state.lastPracticeResult = null;
   state.lastSummary = null;
   elements.evidence.value = "";
@@ -556,6 +587,7 @@ function renderAll(keepWriting = false) {
   renderPlan();
   renderTask(keepWriting);
   renderPractice();
+  renderChapterAssessment();
   renderLearningRecordControls();
   renderDailySummary();
   renderMemory();
@@ -714,6 +746,68 @@ function renderPractice() {
   updateSubmitButtonState();
 }
 
+function renderChapterAssessment() {
+  const submission = getChapterAssessmentSubmission();
+  const result = submission?.result;
+  const resultById = new Map((result?.results || []).map((item) => [item.questionId, item]));
+  const canSubmit = areChapterAssessmentAnswersComplete() && !result;
+  elements.chapterAssessmentPanel.innerHTML = `
+    <div class="panel-title-row">
+      <h2>${escapeHtml(CHAPTER_2_ASSESSMENT.title)}</h2>
+      <span class="assessment-count">${CHAPTER_2_ASSESSMENT.practiceSet.questions.length} 题</span>
+    </div>
+    <p class="muted">${escapeHtml(CHAPTER_2_ASSESSMENT.description)}</p>
+    <p class="boundary">${escapeHtml(CHAPTER_2_ASSESSMENT.practiceSet.boundary)}</p>
+    <div class="practice-list chapter-test-list">
+      ${CHAPTER_2_ASSESSMENT.practiceSet.questions.map((question, index) => {
+        const item = resultById.get(question.questionId);
+        return `
+          <label class="practice-question">
+            <em>${escapeHtml(question.knowledgePoint)}</em>
+            <span>${index + 1}. ${escapeHtml(question.prompt)}</span>
+            <input class="chapter-test-answer" data-question-id="${question.questionId}" value="${escapeHtml(item?.answer || "")}" placeholder="输入答案" ${result ? "disabled" : ""} />
+            ${
+              item
+                ? `<strong class="${item.correct ? "correct" : "incorrect"}">${item.correct ? "正确" : "需订正"}：${escapeHtml(item.explanation)}</strong>`
+                : ""
+            }
+          </label>
+        `;
+      }).join("")}
+    </div>
+    <button id="submitChapterAssessment" class="primary practice-submit" type="button" ${canSubmit ? "" : "disabled"}>
+      ${chapterAssessmentButtonLabel(result)}
+    </button>
+  `;
+  renderChapterAssessmentSummary(result);
+  updateChapterAssessmentButtonState();
+}
+
+function renderChapterAssessmentSummary(result = getChapterAssessmentSubmission()?.result) {
+  if (!result) {
+    elements.chapterAssessmentSummary.innerHTML = `
+      <h2>测试说明</h2>
+      <p>这套测试会检查第二章全部核心方法。答完 20 题后提交，我会把结果写入成长记忆，并给出下一步复盘建议。</p>
+      <ul>
+        <li>80% 及以上：可以进入第三章学习。</li>
+        <li>低于 80%：先复盘错点，再重做相关每日练习。</li>
+        <li>测试结果会保存在本机浏览器里。</li>
+      </ul>
+    `;
+    return;
+  }
+  const weakPoints = result.weakKnowledgePoints || [];
+  elements.chapterAssessmentSummary.innerHTML = `
+    <h2>测试总结</h2>
+    <div class="summary-score ${result.mastered ? "score-good" : "score-watch"}">${result.correct}/${result.total} 题正确 · ${result.accuracy}%</div>
+    <p>${result.mastered ? "第二章整体掌握比较稳，可以继续第三章逻辑学习。" : "第二章还有几个点需要补强，先复盘错题再继续。"}</p>
+    <h3>需要复盘</h3>
+    ${renderList(weakPoints.length ? weakPoints : ["暂无明显错点。"])}
+    <h3>下一步建议</h3>
+    ${renderList(buildChapterAssessmentNextSteps(result))}
+  `;
+}
+
 function renderSubmissionProgress(task) {
   const submission = getTaskSubmission(task);
   const items = [
@@ -831,15 +925,18 @@ function renderMemory() {
 function renderLocalMemoryStatus() {
   const memoryRaw = localStorage.getItem(STORAGE_KEYS.memory);
   const submissionsRaw = localStorage.getItem(STORAGE_KEYS.dailySubmissions);
+  const assessmentRaw = localStorage.getItem(STORAGE_KEYS.chapterAssessments);
   const submissionCount = Object.keys(state.dailySubmissions || {}).length;
   const completedSubmissionCount = countCompletedSubmissions();
+  const chapterAssessmentCount = Object.keys(state.chapterAssessments || {}).length;
   const origin = window.location.origin;
   elements.localMemoryStatus.innerHTML = `
     <strong>本机记忆状态</strong>
     <span>成长记忆：${state.memory.events.length} 条</span>
     <span>每日提交：${submissionCount} 天，其中 ${completedSubmissionCount} 天三项已完成</span>
+    <span>章节测试：${chapterAssessmentCount} 套已保存</span>
     <span>当前浏览器来源：${escapeHtml(origin)}</span>
-    <p>${memoryRaw || submissionsRaw ? "已读取到这个浏览器里的本地学习数据。" : "这个浏览器里还没有读到旧学习数据；如果之前是在微信、另一台手机、localhost 或别的网址使用，数据不会自动出现在这里。"}</p>
+    <p>${memoryRaw || submissionsRaw || assessmentRaw ? "已读取到这个浏览器里的本地学习数据。" : "这个浏览器里还没有读到旧学习数据；如果之前是在微信、另一台手机、localhost 或别的网址使用，数据不会自动出现在这里。"}</p>
   `;
 }
 
@@ -888,6 +985,18 @@ function arePracticeAnswersComplete(task = getTaskForDate(state.plan, state.sele
   return task.practiceSet.questions.every((question) => String(answers[question.questionId] || "").trim().length > 0);
 }
 
+function collectChapterAssessmentAnswers() {
+  return Array.from(document.querySelectorAll(".chapter-test-answer")).reduce((answers, input) => {
+    answers[input.dataset.questionId] = input.value;
+    return answers;
+  }, {});
+}
+
+function areChapterAssessmentAnswersComplete() {
+  const answers = collectChapterAssessmentAnswers();
+  return CHAPTER_2_ASSESSMENT.practiceSet.questions.every((question) => String(answers[question.questionId] || "").trim().length > 0);
+}
+
 function updateSubmitButtonState() {
   const task = getTaskForDate(state.plan, state.selectedDate);
   if (!task) return;
@@ -910,6 +1019,14 @@ function updateSubmitButtonState() {
   }
 }
 
+function updateChapterAssessmentButtonState() {
+  const button = document.querySelector("#submitChapterAssessment");
+  if (!button) return;
+  const result = getChapterAssessmentSubmission()?.result;
+  button.disabled = Boolean(result) || !areChapterAssessmentAnswersComplete();
+  button.textContent = chapterAssessmentButtonLabel(result);
+}
+
 function practiceButtonLabel(task, submission, done) {
   if (done || submission.practice) return "练习题已提交";
   return arePracticeAnswersComplete(task) ? "提交练习题" : "答完练习题后提交";
@@ -925,17 +1042,46 @@ function discoveryButtonLabel(submission, done) {
   return elements.reflection.value.trim() ? "提交今天的小发现" : "写完今天的小发现后提交";
 }
 
+function chapterAssessmentButtonLabel(result) {
+  if (result) return "第二章测试已提交";
+  return areChapterAssessmentAnswersComplete() ? "提交第二章测试" : "答完全部测试题后提交";
+}
+
+function buildChapterAssessmentNextSteps(result) {
+  if (result.mastered) return ["保留错题检查习惯，继续进入第三章逻辑。", "用 3 分钟口头复述：子集、交集、并集、补集和调查问题各怎么检查。"];
+  const first = result.weakKnowledgePoints?.[0] || "第二章错题";
+  return [`先复盘：${first}。`, "重做错题时写出“条件 -> 区域/集合 -> 检查”三步。", "如果调查问题出错，先画韦恩图再列式。"];
+}
+
 function getTaskSubmission(task = getTaskForDate(state.plan, state.selectedDate)) {
   if (!task) return {};
   if (!state.dailySubmissions[task.taskId]) state.dailySubmissions[task.taskId] = {};
   return state.dailySubmissions[task.taskId];
 }
 
+function getChapterAssessmentSubmission() {
+  return state.chapterAssessments[CHAPTER_2_ASSESSMENT.assessmentId] || null;
+}
+
 function persistDailySubmissions() {
   localStorage.setItem(STORAGE_KEYS.dailySubmissions, JSON.stringify(state.dailySubmissions));
 }
 
+function persistChapterAssessments() {
+  localStorage.setItem(STORAGE_KEYS.chapterAssessments, JSON.stringify(state.chapterAssessments));
+}
+
 function restoreDailySubmissions(value) {
+  if (!value) return {};
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function restoreChapterAssessments(value) {
   if (!value) return {};
   try {
     const parsed = JSON.parse(value);
