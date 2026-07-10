@@ -10,14 +10,17 @@ import {
   formatLocalDateIso,
   generateSummerPlan,
   getTaskForDate,
+  mergeMemorySnapshots,
   rebuildMemoryFromDailySubmissions,
   restoreMemory,
   sanitizePersistencePayload
-} from "./mathBuddyEngine.js?v=20260710b";
-import { CHAPTER_2_ASSESSMENT } from "./chapterAssessments.js?v=20260710b";
-import { MATH_THINKING_CURATED_PROFILE } from "./mathThinkingCuratedContent.js?v=20260710b";
-import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260710b";
-import { STORAGE_KEYS } from "./storageKeys.js?v=20260710b";
+} from "./mathBuddyEngine.js?v=20260710c";
+import { CHAPTER_2_ASSESSMENT } from "./chapterAssessments.js?v=20260710c";
+import { CLOUD_MEMORY_CONFIG } from "./cloudConfig.js?v=20260710c";
+import { createCloudMemoryClient, isCloudMemoryConfigured } from "./cloudMemory.js?v=20260710c";
+import { MATH_THINKING_CURATED_PROFILE } from "./mathThinkingCuratedContent.js?v=20260710c";
+import { recognizePhotoText, summarizeOcrText } from "./photoOcr.js?v=20260710c";
+import { STORAGE_KEYS } from "./storageKeys.js?v=20260710c";
 
 const initialToday = formatLocalDateIso();
 
@@ -40,13 +43,24 @@ const state = {
   selectedDate: initialToday,
   hydratedTaskId: null,
   lastPracticeResult: null,
-  lastSummary: null
+  lastSummary: null,
+  cloud: {
+    configured: isCloudMemoryConfigured(CLOUD_MEMORY_CONFIG),
+    client: null,
+    user: null,
+    status: "云端同步未配置。"
+  }
 };
 
 const elements = {
   learnerName: document.querySelector("#learnerName"),
   startDate: document.querySelector("#startDate"),
   endDate: document.querySelector("#endDate"),
+  cloudEmail: document.querySelector("#cloudEmail"),
+  sendLoginLink: document.querySelector("#sendLoginLink"),
+  syncCloudMemory: document.querySelector("#syncCloudMemory"),
+  signOutCloud: document.querySelector("#signOutCloud"),
+  cloudMemoryStatus: document.querySelector("#cloudMemoryStatus"),
   dailyMinutes: document.querySelector("#dailyMinutes"),
   includeWeekends: document.querySelector("#includeWeekends"),
   tocText: document.querySelector("#tocText"),
@@ -84,6 +98,9 @@ function init() {
 
   elements.navButtons.forEach((button) => button.addEventListener("click", () => showPage(button.dataset.view)));
   elements.generatePlan.addEventListener("click", onGeneratePlan);
+  elements.sendLoginLink.addEventListener("click", onSendLoginLink);
+  elements.syncCloudMemory.addEventListener("click", () => syncCloudMemory("manual"));
+  elements.signOutCloud.addEventListener("click", onSignOutCloud);
   document.addEventListener("click", (event) => {
     if (event.target?.id === "submitPractice") onSubmitPractice();
     if (event.target?.id === "submitLearningRecord") onSubmitLearningRecord();
@@ -108,11 +125,113 @@ function init() {
   elements.recognizePhoto.addEventListener("click", onRecognizePhoto);
 
   onGeneratePlan();
+  initCloudMemory();
 }
 
 function showPage(pageName) {
   elements.pages.forEach((page) => page.classList.toggle("page-active", page.dataset.page === pageName));
   elements.navButtons.forEach((button) => button.classList.toggle("active", button.dataset.view === pageName));
+  renderCloudMemoryStatus();
+}
+
+async function initCloudMemory() {
+  renderCloudMemoryStatus();
+  if (!state.cloud.configured) return;
+  try {
+    state.cloud.status = "正在连接云端账户...";
+    renderCloudMemoryStatus();
+    state.cloud.client = await createCloudMemoryClient(CLOUD_MEMORY_CONFIG);
+    state.cloud.user = await state.cloud.client.getUser();
+    state.cloud.client.onAuthStateChange(async (user) => {
+      state.cloud.user = user;
+      if (user) await syncCloudMemory("auto");
+      renderCloudMemoryStatus();
+    });
+    if (state.cloud.user) await syncCloudMemory("auto");
+    else state.cloud.status = "未登录。输入邮箱获取登录链接。";
+  } catch (error) {
+    state.cloud.status = `云端连接失败：${errorMessage(error)}`;
+  }
+  renderCloudMemoryStatus();
+}
+
+async function onSendLoginLink() {
+  const email = elements.cloudEmail.value.trim();
+  if (!state.cloud.configured) {
+    state.cloud.status = "云端同步未配置：请先填写 Supabase URL 和公开 anon key。";
+    return renderCloudMemoryStatus();
+  }
+  if (!email) {
+    state.cloud.status = "请先输入邮箱。";
+    return renderCloudMemoryStatus();
+  }
+  try {
+    state.cloud.client ||= await createCloudMemoryClient(CLOUD_MEMORY_CONFIG);
+    await state.cloud.client.sendLoginLink(email);
+    state.cloud.status = "登录链接已发送，请在邮箱中打开链接完成登录。";
+  } catch (error) {
+    state.cloud.status = `发送失败：${errorMessage(error)}`;
+  }
+  renderCloudMemoryStatus();
+}
+
+async function onSignOutCloud() {
+  if (!state.cloud.client) return;
+  try {
+    await state.cloud.client.signOut();
+    state.cloud.user = null;
+    state.cloud.status = "已退出云端账户。本机记忆仍保留。";
+  } catch (error) {
+    state.cloud.status = `退出失败：${errorMessage(error)}`;
+  }
+  renderCloudMemoryStatus();
+}
+
+async function syncCloudMemory(mode = "auto") {
+  if (!state.cloud.configured) return;
+  try {
+    state.cloud.client ||= await createCloudMemoryClient(CLOUD_MEMORY_CONFIG);
+    state.cloud.user ||= await state.cloud.client.getUser();
+    if (!state.cloud.user) {
+      state.cloud.status = "未登录云端账户，暂未同步。";
+      return renderCloudMemoryStatus();
+    }
+    state.cloud.status = mode === "manual" ? "正在同步云端记忆..." : "正在自动同步云端记忆...";
+    renderCloudMemoryStatus();
+    const cloudSnapshot = await state.cloud.client.loadSnapshot(state.cloud.user.id);
+    if (cloudSnapshot) applyCloudSnapshot(cloudSnapshot);
+    await state.cloud.client.saveSnapshot(state.cloud.user.id, buildCloudSnapshot());
+    state.cloud.status = `已同步到云端账户：${state.cloud.user.email || state.cloud.user.id}`;
+    persistLocalLearningState();
+    renderAll(true);
+  } catch (error) {
+    state.cloud.status = `同步失败：${errorMessage(error)}`;
+    renderCloudMemoryStatus();
+  }
+}
+
+function applyCloudSnapshot(snapshot) {
+  state.memory = mergeMemorySnapshots(state.memory, snapshot.memory || EMPTY_MEMORY);
+  state.dailySubmissions = mergePlainRecords(state.dailySubmissions, snapshot.daily_submissions || snapshot.dailySubmissions || {});
+  state.chapterAssessments = mergePlainRecords(state.chapterAssessments, snapshot.chapter_assessments || snapshot.chapterAssessments || {});
+}
+
+function buildCloudSnapshot() {
+  return {
+    memory: state.memory,
+    dailySubmissions: state.dailySubmissions,
+    chapterAssessments: state.chapterAssessments
+  };
+}
+
+function mergePlainRecords(localRecords = {}, cloudRecords = {}) {
+  return { ...cloudRecords, ...localRecords };
+}
+
+function persistLocalLearningState() {
+  localStorage.setItem(STORAGE_KEYS.memory, sanitizePersistencePayload(state.memory));
+  localStorage.setItem(STORAGE_KEYS.dailySubmissions, JSON.stringify(state.dailySubmissions));
+  localStorage.setItem(STORAGE_KEYS.chapterAssessments, JSON.stringify(state.chapterAssessments));
 }
 
 function onGeneratePlan() {
@@ -209,7 +328,8 @@ function onSubmitChapterAssessment() {
     result,
     completedAt: state.chapterAssessments[CHAPTER_2_ASSESSMENT.assessmentId].submittedAt
   });
-  localStorage.setItem(STORAGE_KEYS.memory, sanitizePersistencePayload(state.memory));
+  persistLocalLearningState();
+  syncCloudMemory("auto");
   renderAll(true);
 }
 
@@ -233,7 +353,8 @@ function finalizeTaskIfReady(task) {
     reflection: submission.discovery.text,
     memory: state.memory
   });
-  localStorage.setItem(STORAGE_KEYS.memory, sanitizePersistencePayload(state.memory));
+  persistLocalLearningState();
+  syncCloudMemory("auto");
 }
 
 function onResetMemory() {
@@ -592,6 +713,7 @@ function renderAll(keepWriting = false) {
   renderDailySummary();
   renderMemory();
   renderLocalMemoryStatus();
+  renderCloudMemoryStatus();
   renderTimeline();
 }
 
@@ -935,9 +1057,24 @@ function renderLocalMemoryStatus() {
     <span>成长记忆：${state.memory.events.length} 条</span>
     <span>每日提交：${submissionCount} 天，其中 ${completedSubmissionCount} 天三项已完成</span>
     <span>章节测试：${chapterAssessmentCount} 套已保存</span>
+    <span>云端账户：${state.cloud.user ? escapeHtml(state.cloud.user.email || state.cloud.user.id) : state.cloud.configured ? "未登录" : "未配置"}</span>
     <span>当前浏览器来源：${escapeHtml(origin)}</span>
     <p>${memoryRaw || submissionsRaw || assessmentRaw ? "已读取到这个浏览器里的本地学习数据。" : "这个浏览器里还没有读到旧学习数据；如果之前是在微信、另一台手机、localhost 或别的网址使用，数据不会自动出现在这里。"}</p>
   `;
+}
+
+function renderCloudMemoryStatus() {
+  if (!elements.cloudMemoryStatus) return;
+  const configured = state.cloud.configured;
+  elements.cloudMemoryStatus.innerHTML = `
+    <strong>云端同步状态</strong>
+    <span>${configured ? "Supabase 已配置" : "Supabase 未配置"}</span>
+    <span>${state.cloud.user ? `当前账户：${escapeHtml(state.cloud.user.email || state.cloud.user.id)}` : "当前账户：未登录"}</span>
+    <p>${escapeHtml(state.cloud.status)}</p>
+  `;
+  if (elements.sendLoginLink) elements.sendLoginLink.disabled = !configured;
+  if (elements.syncCloudMemory) elements.syncCloudMemory.disabled = !configured || !state.cloud.user;
+  if (elements.signOutCloud) elements.signOutCloud.disabled = !configured || !state.cloud.user;
 }
 
 function countCompletedSubmissions() {
@@ -1128,6 +1265,10 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function errorMessage(error) {
+  return error instanceof Error ? error.message : String(error || "未知错误");
 }
 
 init();

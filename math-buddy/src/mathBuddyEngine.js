@@ -351,6 +351,35 @@ export function completeChapterAssessment({
   };
 }
 
+export function mergeMemorySnapshots(localMemory = EMPTY_MEMORY, cloudMemory = EMPTY_MEMORY) {
+  const local = restoreMemory(sanitizePersistencePayload(localMemory));
+  const cloud = restoreMemory(sanitizePersistencePayload(cloudMemory));
+  const eventsById = new Map();
+  for (const event of [...cloud.events, ...local.events]) {
+    const previous = eventsById.get(event.id);
+    if (!previous || String(event.createdAt || "") >= String(previous.createdAt || "")) {
+      eventsById.set(event.id, event);
+    }
+  }
+  const events = Array.from(eventsById.values()).sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+  const progress = buildProgress(events);
+  const signals = collectSignals(events);
+  const preferences = {
+    ...cloud.preferences,
+    ...local.preferences,
+    motivationStyle: inferMotivationStyle(progress, signals, local.preferences?.motivationStyle || cloud.preferences?.motivationStyle)
+  };
+  return {
+    goal: local.goal || cloud.goal || DEFAULT_SETTINGS.goal,
+    preferences,
+    weaknesses: signals.weaknesses,
+    strengths: signals.strengths,
+    progress,
+    next_goal: local.next_goal || cloud.next_goal || EMPTY_MEMORY.next_goal,
+    events
+  };
+}
+
 export function buildFeedback({ task, evidence = "", reflection = "", memory = EMPTY_MEMORY, completed = false }) {
   const cleanEvidence = normalizeStudentText(evidence);
   const cleanReflection = normalizeStudentText(reflection);

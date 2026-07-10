@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Math Buddy · 暑假数学思维学习工具</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./src/styles.css?v=20260710b" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260710c" />
   </head>
   <body>
     <main class="app-shell">
@@ -138,14 +138,29 @@
             <button id="generatePlan" class="primary" type="button">保存设置</button>
           </article>
 
+          <article class="panel compact">
+            <h2>云端账户</h2>
+            <p class="muted">登录后，学习记忆会同步到线上账户；本机记录会先和云端记录合并，再上传保存。</p>
+            <label>
+              邮箱
+              <input id="cloudEmail" type="email" placeholder="student@example.com" />
+            </label>
+            <div class="cloud-actions">
+              <button id="sendLoginLink" class="primary" type="button">发送登录链接</button>
+              <button id="syncCloudMemory" class="ghost" type="button">同步记忆</button>
+              <button id="signOutCloud" class="ghost" type="button">退出</button>
+            </div>
+            <div id="cloudMemoryStatus" class="local-memory-status"></div>
+          </article>
+
           <article class="panel toc-panel">
             <h2>预制章节目录</h2>
-            <p class="muted">当前自动载入《数学思维》第 2 章预制学习包。你可以在首页选择任一小节开始学习。</p>
+            <p class="muted">当前自动载入《数学思维》第 2 章和第 3 章预制学习包。你可以在首页选择任一小节开始学习。</p>
             <textarea id="tocText" rows="9" readonly></textarea>
           </article>
         </section>
       </section>
     </main>
-    <script type="module" src="./src/app.js?v=20260710b"></script>
+    <script type="module" src="./src/app.js?v=20260710c"></script>
   </body>
 </html>
